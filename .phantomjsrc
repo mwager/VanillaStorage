@@ -1,0 +1,8 @@
+{
+    "ignoreSslErrors": true,
+    "maxDiskCacheSize": 100000000,
+    "outputEncoding": "utf8",
+
+    "localStoragePath": ".",
+    "localStorageQuota": 1000000000000000000000000000000000
+}

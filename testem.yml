@@ -1,0 +1,25 @@
+### Testem config file for fsc
+###
+### We use testem only for automated browser tests, so we can automate
+### the task of running our unit tests against multiple browsers.
+###
+
+# We want a custom index file: (created by "make testem")
+# "framework" and "src_files" are irrelevant in this case
+"test_page": "test/index_testem.html"
+
+# launch_in_dev:
+#     - Safari
+#     - Firefox
+#     - Opera
+#     - Chrome
+#     - Chrome Canary
+
+launch_in_ci:
+    # NOT NEEDD. run grunt test to run via phantomjs.
+    # - PhantomJS
+    - Firefox
+    - Firefox
+    - Opera
+    - Chrome
+    - Chrome Canary
