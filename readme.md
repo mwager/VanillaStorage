@@ -20,6 +20,21 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
     $ grunt test
     $ grunt build . # TODO requirejs build for one file. just need a config.js somewhere!
 
+
+Either include the files via script tags or add something like the following to your requirejs config:
+
+```javascript
+...
+    paths: {
+        VanillaStorage: 'path/to//src/VanillaStorage',
+        WebSQLStorage:  'path/to//src/WebSQLStorage',
+        IDBStorage:     'path/to//src/IDBStorage',
+        storageHelpers: 'path/to//src/storageHelpers'
+    },
+...
+```
+
+
 ## Usage ##
 
 The API is all async and pretty simple, there are 4 public methods:

@@ -111,7 +111,10 @@ require.config({
     ],
 
     paths: {
-
+        VanillaStorage: './src/VanillaStorage',
+        WebSQLStorage:  './src/WebSQLStorage',
+        IDBStorage:     './src/IDBStorage',
+        storageHelpers: './src/storageHelpers'
     },
 
     shim: {

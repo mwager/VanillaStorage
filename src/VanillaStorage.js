@@ -127,9 +127,9 @@
     // Export using AMD support...
     if(typeof define === 'function' && define.amd) {
         define([
-                './WebSQLStorage',
-                './IDBStorage',
-                './storageHelpers'
+                'WebSQLStorage',
+                'IDBStorage',
+                'storageHelpers'
             ], function(WebSQLStorage, IDBStorage, storageHelpers) {
                 var Storage = factory(WebSQLStorage, IDBStorage, storageHelpers);
                 return Storage;

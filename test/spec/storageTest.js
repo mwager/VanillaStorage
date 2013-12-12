@@ -16,12 +16,12 @@ define(function(require) {
     // "Storage" is just a simple proxy for the other libs
 
     // This class...
-    var VanillaStorage = require('src/VanillaStorage');
+    var VanillaStorage = require('VanillaStorage');
 
     // ...is using this two classes under the hood: (which we also test in
     // isolation here)
-    var IDBStorage    = require('src/IDBStorage');
-    var WebSQLStorage = require('src/WebSQLStorage');
+    var IDBStorage    = require('IDBStorage');
+    var WebSQLStorage = require('WebSQLStorage');
 
     var DEMO_DATA = {foo: 'bar'};
     var TMP_KEY   = 'tmp';
