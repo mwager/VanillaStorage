@@ -8,8 +8,7 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
 
 ### Via bower  ###
 
-    # TODO raw url?
-    $ bower install vanilla-storage
+    $ bower info vanilla-storage
 
 ### From source  ###
 

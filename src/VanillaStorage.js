@@ -1,7 +1,7 @@
 /**
  * VanillaStorage.js
  *
- * Simple custom client side storage abstraction
+ * Simple client side storage abstraction
  *
  * This is basically just a wrapper for the different storage backends,
  * exporting a very simple API for CRUDing on the clientside by abstracting
