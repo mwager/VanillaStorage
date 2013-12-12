@@ -26,6 +26,31 @@ mountFolder = function (connect, dir) {
 // templateFramework: 'handlebars'
 
 module.exports = function (grunt) {
+    // TODO checkout more
+    var browsers = [{
+        browserName: 'firefox',
+        version: '19',
+        platform: 'XP'
+    }, {
+        browserName: 'chrome',
+        platform: 'XP'
+    }, {
+        browserName: 'chrome',
+        platform: 'linux'
+    }, {
+        browserName: 'internet explorer',
+        platform: 'WIN8',
+        version: '10'
+    }, {
+        browserName: 'internet explorer',
+        platform: 'VISTA',
+        version: '9'
+    }, {
+        browserName: 'opera',
+        platform: 'Windows 2008',
+        version: '12'
+    }];
+
     // load all grunt tasks
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
@@ -63,7 +88,21 @@ module.exports = function (grunt) {
             }
         },
 
-        // ...und starte "mocha-phantomjs" gegen http://runningServer:PORT/test
+        'saucelabs-mocha': {
+            all: {
+                options: {
+                    urls: ['http://mwager.github.io/VanillaStorage/test/'],
+                    tunnelTimeout: 5,
+                    build: process.env.TRAVIS_JOB_ID,
+                    concurrency: 3,
+                    browsers: browsers,
+                    testname: 'mocha tests',
+                    tags: ['master']
+                }
+            }
+        },
+
+        // ...und starte 'mocha-phantomjs' gegen http://runningServer:PORT/test
         exec: {
             sleep: {
                 cmd: 'sleep 50000',
@@ -140,6 +179,14 @@ module.exports = function (grunt) {
         'clean:server',
         'connect:testserver',
         'exec:sleep:10000'
+    ]);
+
+    // TODO
+    // $ export SAUCE_USERNAME=mwager
+    // $ export SAUCE_ACCESS_KEY=API_KEY
+    grunt.registerTask('test-sauce', [
+        // 'connect:testserver',
+        'saucelabs-mocha'
     ]);
 
     grunt.registerTask('testem', [

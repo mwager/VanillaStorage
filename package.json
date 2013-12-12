@@ -18,6 +18,7 @@
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-cli": "*",
+    "grunt-saucelabs": "~4.0.2",
     "grunt-contrib-copy": "~0.4.0",
     "grunt-contrib-concat": "~0.2.0",
     "grunt-contrib-handlebars": "~0.5.8",

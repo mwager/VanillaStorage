@@ -2,7 +2,11 @@
 
 [![Build Status](https://travis-ci.org/mwager/VanillaStorage.png?branch=master)](https://travis-ci.org/mwager/VanillaStorage)
 
-WORK IN PROGRESS, check all TODOs !!!
+[![Selenium Test Status](https://saucelabs.com/buildstatus/mwager)](https://saucelabs.com/u/mwager)
+
+[![Selenium Test Status](https://saucelabs.com/browser-matrix/mwager.svg)](https://saucelabs.com/u/mwager)
+
+[http://mwager.github.io/VanillaStorage/test/](Run the Mocha tests in your browser!)
 
 Simple key/value based storage abstraction lib for usage in browser based environments. Uses IndexedDB with fallback to [deprecated but still widely supported and needed] WebSQL.
 
@@ -20,21 +24,8 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
     $ grunt test
     $ grunt build . # TODO requirejs build for one file. just need a config.js somewhere!
 
-###   ###
 
-
-### Global vs. AMD ###
-
-Either include the files via script tags:
-
-```html
-<script src="path/to/vanilla-storage/src/storageHelpers.js"></script>
-<script src="path/to/vanilla-storage/src/WebSQLStorage.js"></script>
-<script src="path/to/vanilla-storage/src/IDBStorage.js"></script>
-<script src="path/to/vanilla-storage/src/VanillaStorage.js"></script>
-```
-
-...or add something like the following to your requirejs config:
+Either include the files via script tags or add something like the following to your requirejs config:
 
 ```javascript
 ...
@@ -53,9 +44,9 @@ Either include the files via script tags:
 The API is all async and pretty simple, there are 4 public methods:
 
 * `get(key, fn)`
-* `save(key, data, fn)`
-* `delete(key, fn)`
-* `nuke(fn)`
+* `save(key, data)`
+* `delete(key)`
+* `nuke()`
 
 Callback functions always have the error as first parameter, data as second if any. So if the first parameter of a callback is `undefined` it means the operation was successful.
 
@@ -150,5 +141,3 @@ Run the suite in real browsers via `testem`:
     $ phantomjs --debug=false --local-storage-path=. --local-storage-quota=100000000000??? ./node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee http://localhost:1234/test
 
     $ grunt test #fails too if too much data..
-
-* add testem support
