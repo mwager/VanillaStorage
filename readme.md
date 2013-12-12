@@ -26,10 +26,10 @@ Either include the files via script tags or add something like the following to 
 ```javascript
 ...
     paths: {
-        VanillaStorage: 'path/to//src/VanillaStorage',
-        WebSQLStorage:  'path/to//src/WebSQLStorage',
-        IDBStorage:     'path/to//src/IDBStorage',
-        storageHelpers: 'path/to//src/storageHelpers'
+        VanillaStorage: 'path/to/src/VanillaStorage',
+        WebSQLStorage:  'path/to/src/WebSQLStorage',
+        IDBStorage:     'path/to/src/IDBStorage',
+        storageHelpers: 'path/to/src/storageHelpers'
     },
 ...
 ```

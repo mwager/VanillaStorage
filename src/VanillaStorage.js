@@ -35,8 +35,10 @@
             // 'local-storage' : new LocalStorage()
         };
 
-        // The exported object
-        var Storage = function(options, initCallback) {
+        /**
+         * Constructor
+         */
+        var VanillaStorage = function(options, initCallback) {
             var self = this;
 
             initCallback = ensureCallback(initCallback);
@@ -90,7 +92,7 @@
         };
 
         // THE API:
-        Storage.prototype = {
+        VanillaStorage.prototype = {
             isValid: function() {
                 return this.adapter.isValid();
             },
@@ -115,12 +117,12 @@
         // --- static stuff ---
 
         // static isValid helper (needed in storageTest.js)
-        Storage.isValid = function(adapterID) {
+        VanillaStorage.isValid = function(adapterID) {
             var adapter = adaptersWeSupport[adapterID];
             return adapter ? adapter.isValid() : false;
         };
 
-        return Storage;
+        return VanillaStorage;
     }
 
 

@@ -8,6 +8,8 @@
     'use strict';
 
     var helpers = {
+        // customParseKey = function(key) { return key; },
+
         ensureCallback: function(callback) {
             return typeof callback !== 'function' ? function() {} : callback;
         },
@@ -19,8 +21,7 @@
          * For WebSQL, it is also better to parse the key
          */
         parseKey: function(key) {
-            // solange wir REST URLS verwenden: (TODO better)
-            // key = key.replace(__app_config__.apiBase, '');
+            // key = this.customParseKey(key);
 
             // replace slashes:
             key = key.replace(/\//g, '');
