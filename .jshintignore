@@ -1,0 +1,8 @@
+# JSHint ignore file
+# run jshint from the root:
+# $ jshint .
+
+dist
+bower_components
+node_modules
+test/lib
