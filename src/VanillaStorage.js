@@ -36,7 +36,7 @@
         };
 
         // The exported object
-        var Storage = function(attr, initCallback) {
+        var Storage = function(options, initCallback) {
             var self = this;
 
             initCallback = ensureCallback(initCallback);
@@ -44,9 +44,9 @@
             this.adapter = null;
 
             // which adapter shall we use?
-            if(attr && attr.adapterID) {
-                this.adapter   = adaptersWeSupport[attr.adapterID];
-                this.adapterID = attr.adapterID;
+            if(options && options.adapterID) {
+                this.adapter   = adaptersWeSupport[options.adapterID];
+                this.adapterID = options.adapterID;
             }
             else {
                 for(var adapterID in adaptersWeSupport) {
@@ -75,11 +75,11 @@
             }
 
             // Indexed DB needs the keys on creation
-            if(typeof this.adapter.setKeys === 'function' && attr && attr.keys) {
-                this.adapter.setKeys(attr.keys);
+            if(typeof this.adapter.setKeys === 'function' && options && options.keys) {
+                this.adapter.setKeys(options.keys);
             }
 
-            // need to init the used adapter
+            // need to init the used adapter async
             this.adapter.init(function(err) {
                 if(err) {
                     initCallback.call(self, err);

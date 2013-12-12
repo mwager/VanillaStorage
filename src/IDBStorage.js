@@ -258,7 +258,7 @@
 
     // Export using AMD support...
     if(typeof define === 'function' && define.amd) {
-        define(['src/storageHelpers'], function(helpers) {
+        define(['./storageHelpers'], function(helpers) {
             return factory(helpers);
         });
     }

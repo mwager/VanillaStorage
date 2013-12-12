@@ -16,7 +16,7 @@ define(function(require) {
     // "Storage" is just a simple proxy for the other libs
 
     // This class...
-    var Storage = require('src/VanillaStorage');
+    var VanillaStorage = require('src/VanillaStorage');
 
     // ...is using this two classes under the hood: (which we also test in
     // isolation here)
@@ -51,7 +51,8 @@ define(function(require) {
 
         BIG_STRING = BIG_STRING.join('');
 
-        for(i = 0; i < 10; i ++) {
+        // TODO increase 2 to 10 or more...
+        for(i = 0; i < 2; i ++) {
             var t = {};
             for(var j = 0; j < 10; j ++) {
                 t.largeString = BIG_STRING;
@@ -110,22 +111,31 @@ define(function(require) {
                         });
                     });
                 });
+
                 it('should store even more data', function(done) {
                     var start = window.performance.now();
-                    this.webSQLStorage.save(TMP_KEY, LARGE_OBJECT,
-                        function __saved(err) {
-                            if(err) {
-                                log(err);
+                    var LEN = 1; // TODO figure out how to store more!
+                    var self = this;
+
+                    function it() {
+                        self.webSQLStorage.save(TMP_KEY + '_' + LEN, LARGE_OBJECT,
+                            function __saved(err) {
+                                expect(!!err).to.equal(false);
+
+                                var t = (window.performance.now() - start) / 1000;
+                                log('Isolation WebSQLStorage: stored ~' +
+                                    window.round(LARGE_LEN/factor/factor, 3) + 'MB in ~' + t + 's');
+
+                                if(--LEN === 0) {
+                                    done();
+                                }
+                                else  {
+                                    it();
+                                }
                             }
-
-                            expect(!!err).to.equal(false);
-                            var t = window.round(window.performance.now() - start / 1000, 2);
-                            log('Isolation WebSQLStorage: stored ~' +
-                                window.round(LARGE_LEN/factor/factor, 3) + 'MB in ~' + t + 's');
-
-                            done();
-                        }
-                    );
+                        );
+                    }
+                    it();
                 });
             });
         }
@@ -223,8 +233,6 @@ define(function(require) {
                 describe('Basic CRUD (adapter: ' + adapterID + ')', function() {
 
                     before(function(done) {
-                        var self = this;
-
                         this.keys = [
                             'tmp',
                             'anotherkey'
@@ -239,14 +247,14 @@ define(function(require) {
                             keys:      this.keys
                         };
 
-                        new Storage(storageOptions, function __readyToUseAPI(err) {
+                        this.storage = new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
                             if(err) {
                                 log('ERROR STORAGE: ' + err);
                                 return done();
                                 // throw err;
                             }
 
-                            self.storage = this;
+                            // self.storage = this;
                             done();
                         });
 
@@ -378,11 +386,11 @@ define(function(require) {
         var adapterID;
 
         adapterID = 'websql-storage';
-        if(Storage.isValid(adapterID)) {
+        if(VanillaStorage.isValid(adapterID)) {
             runSuiteForCurrentAdapter(adapterID);
         }
         adapterID = 'indexeddb-storage';
-        if(Storage.isValid(adapterID)) {
+        if(VanillaStorage.isValid(adapterID)) {
             runSuiteForCurrentAdapter(adapterID);
         }
     });

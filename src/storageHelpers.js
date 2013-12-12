@@ -32,7 +32,6 @@
     };
 
     if(typeof define === 'function' && define.amd) {
-
         define([/* no deps */], function() {
             return helpers;
         });

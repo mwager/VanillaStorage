@@ -65,9 +65,12 @@ module.exports = function (grunt) {
 
         // ...und starte "mocha-phantomjs" gegen http://runningServer:PORT/test
         exec: {
+            sleep: {
+                cmd: 'sleep 50000',
+            },
             mocha: {
                 command:
-                './node_modules/.bin/mocha-phantomjs http://localhost:<%= connect.testserver.options.port %>/test',
+                './node_modules/.bin/mocha-phantomjs http://localhost:<%= connect.testserver.options.port %>/test/',
                 stdout: true
             },
             testem: {
@@ -125,6 +128,11 @@ module.exports = function (grunt) {
         'clean:server',
         'connect:testserver',
         'exec:mocha'
+    ]);
+    grunt.registerTask('test-server', [
+        'clean:server',
+        'connect:testserver',
+        'exec:sleep:10000'
     ]);
 
     grunt.registerTask('testem', [

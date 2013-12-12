@@ -6,3 +6,4 @@ dist
 bower_components
 node_modules
 test/lib
+phantomjs_tests.js

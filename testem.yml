@@ -18,10 +18,8 @@
 launch_in_ci:
     # NOT NEEDD. run grunt test to run via phantomjs.
     # - PhantomJS
-
-    # should work on ci server
     - Firefox
-    #- Firefox
-    #- Opera
-    #- Chrome
-    #- Chrome Canary
+    - Firefox
+    - Opera
+    - Chrome
+    - Chrome Canary
