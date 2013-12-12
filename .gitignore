@@ -4,3 +4,5 @@
 # phantomjs storage dir
 /http_localhost_1234
 /Databases.db
+
+/test/index_testem.html

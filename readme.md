@@ -100,6 +100,17 @@ if(idb.isValid()) {
 }
 ```
 
+### Testing ###
+
+    $ grunt test
+
+    # or:
+    $ grunt test-server&
+    $ phantomjs --debug=false --local-storage-path=. --local-storage-quota=100000000000??? ./node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee http://localhost:1234/test
+
+Run the suite in real browsers via `testem`:
+
+    $ grunt testem
 
 ## TODOs ##
 * figure out way to store more data using phantomjs. increase in storageTest, see TODO. or only on browsers? testem etc...

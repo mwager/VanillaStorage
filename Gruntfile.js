@@ -81,7 +81,14 @@ module.exports = function (grunt) {
 
         // all text-replace tasks
         replace: {
-
+            testem: {
+                src: ['./test/index.html'],
+                dest: './test/index_testem.html',
+                replacements: [{
+                    from: '<!-- testem_includes_by_gruntfile -->',
+                    to: '<script src="\/testem.js"><\/script>'
+                }]
+            }
         },
 
         // express app
