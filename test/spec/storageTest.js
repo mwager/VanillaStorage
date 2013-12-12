@@ -114,6 +114,10 @@ define(function(require) {
                     var start = window.performance.now();
                     this.webSQLStorage.save(TMP_KEY, LARGE_OBJECT,
                         function __saved(err) {
+                            if(err) {
+                                log(err);
+                            }
+
                             expect(!!err).to.equal(false);
                             var t = window.round(window.performance.now() - start / 1000, 2);
                             log('Isolation WebSQLStorage: stored ~' +
