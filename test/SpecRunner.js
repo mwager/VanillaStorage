@@ -137,7 +137,7 @@ function() {
         log('***** SpecRunner: all tests done in ~' + time +
             's - # assertions: ' + window.mocha.assertionCounter + ' *****');
 
-        $('#mocha-stats').append('<li>Assertions: <em>' +
+        document.getElementById('mocha-stats').innerHTML += ('<li>Assertions: <em>' +
             window.mocha.assertionCounter + '</em></li>');
     }
 
@@ -147,21 +147,21 @@ function() {
     ];
     require(specs, function() {
         // on dom ready require all specs and run
-        $(function() {
-            window.results = document.getElementById('results');
+        // document.addEventListener("DOMContentLoaded", function(/*event*/) {
+        window.results = document.getElementById('results');
 
-            var bootTests = function() {
-                start = window.performance.now();
+        var bootTests = function() {
+            start = window.performance.now();
 
-                if (window.mochaPhantomJS) {
-                    window.mochaPhantomJS.run(/*allTestsDone*/);
-                }
-                else {
-                    window.mocha.run(allTestsDone);
-                }
-            };
-            bootTests();
-        });
+            if (window.mochaPhantomJS) {
+                window.mochaPhantomJS.run(/*allTestsDone*/);
+            }
+            else {
+                window.mocha.run(allTestsDone);
+            }
+        };
+        bootTests();
+        // });
     });
 });
 

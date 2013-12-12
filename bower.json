@@ -2,7 +2,6 @@
   "name": "vanilla-storage",
   "version": "0.1.0",
   "dependencies": {
-    "zepto": "http://zeptojs.com/zepto.js",
     "requirejs": "~2.1.5",
     "almond": "~0.2.6"
   },
