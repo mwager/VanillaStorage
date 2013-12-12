@@ -45,9 +45,9 @@ var objectStoreNames = ['store1', 'store2'],
 // vanilla api ready to use
 // it uses IndexedDB or WebSQL under the hood
 var readyToUseAPI = function(err) {
-    console.log(err, this);
+    console.log(err, this); // -> this instanceof VanillaStorage
 
-    vanilla.save(KEY, DEMO_DATA, function(err) {
+    this.save(KEY, DEMO_DATA, function(err) {
         console.log(err); // should be undefined
 
         vanilla.get(KEY, function(err, data) {
@@ -117,6 +117,7 @@ Run the suite in real browsers via `testem`:
 
     $ grunt test-server &
     $ phantomjs --help # -> --local-storage-quota=<val in KB> ...
+
     # but smt like the following fails with more than ~4MB..
     $ phantomjs --debug=false --local-storage-path=. --local-storage-quota=100000000000??? ./node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee http://localhost:1234/test
 
