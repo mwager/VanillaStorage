@@ -118,7 +118,7 @@ Run the suite in real browsers via `testem`:
     $ grunt test-server &
     $ phantomjs --help # -> --local-storage-quota=<val in KB> ...
 
-    # but smt like the following fails with more than ~4MB..
+    ---> but smt like the following fails with more than ~4MB..
     $ phantomjs --debug=false --local-storage-path=. --local-storage-quota=100000000000??? ./node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee http://localhost:1234/test
 
     $ grunt test #fails too if too much data..

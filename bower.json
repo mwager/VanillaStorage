@@ -2,7 +2,7 @@
   "name": "vanilla-storage",
   "version": "0.1.0",
   "dependencies": {
-    "jquery": "~1.9",
+    "zepto": "~1.0.0",
     "requirejs": "~2.1.5",
     "almond": "~0.2.6"
   },
