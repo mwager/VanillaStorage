@@ -70,7 +70,7 @@ define(function(require) {
 
 
 
-    describe('Storage Abstraction', function () {
+    describe('VanillaStorage.js Storage Abstraction', function () {
 
         function runSuiteForWebSQLStorage() {
             describe('Isolation :: WebSQLStorage', function () {
