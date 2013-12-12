@@ -24,8 +24,21 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
     $ grunt test
     $ grunt build . # TODO requirejs build for one file. just need a config.js somewhere!
 
+###   ###
 
-Either include the files via script tags or add something like the following to your requirejs config:
+
+### Global vs. AMD ###
+
+Either include the files via script tags:
+
+```html
+<script src="path/to/vanilla-storage/src/storageHelpers.js"></script>
+<script src="path/to/vanilla-storage/src/WebSQLStorage.js"></script>
+<script src="path/to/vanilla-storage/src/IDBStorage.js"></script>
+<script src="path/to/vanilla-storage/src/VanillaStorage.js"></script>
+```
+
+...or add something like the following to your requirejs config:
 
 ```javascript
 ...
@@ -44,9 +57,9 @@ Either include the files via script tags or add something like the following to 
 The API is all async and pretty simple, there are 4 public methods:
 
 * `get(key, fn)`
-* `save(key, data)`
-* `delete(key)`
-* `nuke()`
+* `save(key, data, fn)`
+* `delete(key, fn)`
+* `nuke(fn)`
 
 Callback functions always have the error as first parameter, data as second if any. So if the first parameter of a callback is `undefined` it means the operation was successful.
 
