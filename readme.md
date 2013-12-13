@@ -6,7 +6,7 @@
 
 [![Selenium Test Status](https://saucelabs.com/browser-matrix/mwager.svg)](https://saucelabs.com/u/mwager)
 
-[http://mwager.github.io/VanillaStorage/test/](Run the Mocha tests in your browser!)
+[Run the Mocha tests in your browser!](http://mwager.github.io/VanillaStorage/test/)
 
 Simple key/value based storage abstraction lib for usage in browser based environments. Uses IndexedDB with fallback to [deprecated but still widely supported and needed] WebSQL.
 
@@ -18,13 +18,10 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
 
 ### From source  ###
 
-    $ git clone ...
+    $ git clone git@github.com:mwager/VanillaStorage.git
     $ npm install && bower install
-    $ jshint . # TODO
     $ grunt test
     $ grunt build . # TODO requirejs build for one file. just need a config.js somewhere!
-
-###   ###
 
 
 ### Global vs. AMD ###
