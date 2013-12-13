@@ -23,36 +23,6 @@
         <p class="text-center">Watch the tests <a href="./test">here</a> or on
         <a href="https://travis-ci.org/mwager/VanillaStorage">travis</a></p>
       </div>
-
-      <hr>
-      <div class="large-12 columns" id="md"></div>
-
-      <script src="http://zeptojs.com/zepto.js"></script>
-      <script src="utils/markdown.js"></script>
-      <script type="text/javascript">
-      $(function() {
-        var $md = $('#md');
-
-        $.ajax({
-          type: 'GET',
-          dataType: 'text',
-          url: './readme.md',
-          success: function(md) {
-            $md.html(md);
-
-            try {
-              md = markdown.toHTML(md);
-              // render generated html
-              $md.html(md);
-            }
-            catch(e) {
-              console.log(e);
-            }
-
-          }
-        });
-      });
-      </script>
     </div>
   </body>
 </html>
