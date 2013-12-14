@@ -21,7 +21,12 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
     $ git clone git@github.com:mwager/VanillaStorage.git
     $ npm install && bower install
     $ grunt test
-    $ grunt build . # TODO requirejs build for one file. just need a config.js somewhere!
+
+### Optimied src ###
+
+See `dist/vanilla-storage.js`, or if you want to build it yourself:
+
+    $ grunt build # creates dist/vanilla-storage.js for production usage
 
 
 ### Global vs. AMD ###
@@ -90,8 +95,8 @@ var readyToUseAPI = function(err) {
 };
 
 // pre-checks possible:
-VanillaStorage.isValid('websql-storage')
-VanillaStorage.isValid('indexeddb-storage')
+console.log(VanillaStorage.isValid('websql-storage'))
+console.log(VanillaStorage.isValid('indexeddb-storage'))
 
 // NOTE: you must provide a `ready`-calback
 vanilla = new VanillaStorage({

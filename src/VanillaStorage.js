@@ -133,19 +133,17 @@
                 'IDBStorage',
                 'storageHelpers'
             ], function(WebSQLStorage, IDBStorage, storageHelpers) {
-                var Storage = factory(WebSQLStorage, IDBStorage, storageHelpers);
-                return Storage;
+                var VanillaStorage = factory(WebSQLStorage, IDBStorage, storageHelpers);
+                return VanillaStorage;
             }
         );
     }
     // ...or simply to the global namespace
     else {
-        window.Storage = factory(
-                window.WebSQLStorage,
-                window.IDBStorage,
-                window.storageHelpers
-            );
-
-        return window.Storage;
+        window.VanillaStorage = factory(
+            window.WebSQLStorage,
+            window.IDBStorage,
+            window.storageHelpers
+        );
     }
 })();

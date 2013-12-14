@@ -76,7 +76,7 @@
                         });
                         // store.createIndex(key, key, {unique:true});
 
-                        log('---indexed-db--- created store: ' + key, store);
+                        console.log('---indexed-db--- created store: ' + key, store);
                     }
                 };
 
@@ -184,12 +184,12 @@
                         };
                     }
                     catch(e) {
-                        log(key, 'IDB Error put: ', e, ' data: ', data);
+                        console.log(key, 'IDB Error put: ', e, ' data: ', data);
                         return callback(e);
                     }
                 }
                 catch(e) {
-                    log(key, e);
+                    console.log(key, e);
                     return callback(e);
                 }
                 //});

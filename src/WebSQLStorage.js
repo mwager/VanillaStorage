@@ -53,7 +53,7 @@
                     }
                 }
                 catch(e) {
-                    log('ERROR opening websql database', e); // TODO raus
+                    console.log('ERROR opening websql database', e); // TODO raus
                 }
 
                 if(!this.db) {

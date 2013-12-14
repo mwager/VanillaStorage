@@ -130,6 +130,65 @@ module.exports = function (grunt) {
             }
         },
 
+        // Require.js Optimizer Config
+        requirejs: {
+            compile: {
+                options: {
+                    name          : 'VanillaStorage',
+                    baseUrl       : 'src',
+                    // mainConfigFile: 'src/requirejs-config.js',
+                    out           : 'dist/vanilla-storage.js',
+                    paths: {
+                        VanillaStorage: './VanillaStorage',
+                        WebSQLStorage:  './WebSQLStorage',
+                        IDBStorage:     './IDBStorage',
+                        storageHelpers: './storageHelpers'
+                    },
+
+                    preserveLicenseComments: false,
+                    useStrict: true,
+                    wrap: true
+                }
+            }
+        },
+        /*requirejs: {
+            dist: {
+                // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
+                options: {
+                    // `name` and `out` is set by grunt-usemin
+                    baseUrl: 'app/scripts',
+                    optimize: 'none', // TODO!?
+
+                    //paths: {
+                    //    'templates': '../../.tmp/scripts/templates'
+                    //},
+
+                    // TODO: Figure out how to make sourcemaps work with grunt-usemin
+                    // https://github.com/yeoman/grunt-usemin/issues/30
+                    //generateSourceMaps: true,
+                    // required to support SourceMaps
+                    // http://requirejs.org/docs/errors.html#sourcemapcomments
+                    preserveLicenseComments: false,
+                    useStrict: true,
+                    wrap: true,
+
+                    //uglify2: {} || 'none' TODO! // https://github.com/mishoo/UglifyJS2
+
+                    pragmasOnSave: {
+                        //removes Handlebars.Parser code (used to compile template strings) set
+                        //it to `false` if you need to parse template strings even after build
+                        // excludeHbsParser : true,
+
+                        // kills the entire plugin set once it's built.
+                        // excludeHbs: true,
+
+                        // removes i18n precompiler, handlebars and json2
+                        // excludeAfterBuild: true
+                    }
+                }
+            }
+        },*/
+
         // express app
         express: {
             options: {
@@ -152,7 +211,6 @@ module.exports = function (grunt) {
                 }
             }
         },
-
 
         // open app and test page
         open: {
@@ -180,6 +238,11 @@ module.exports = function (grunt) {
         'connect:testserver',
         'exec:sleep:10000'
     ]);
+
+    grunt.registerTask('build', [
+        'requirejs'
+    ]);
+
 
     // TODO
     // $ export SAUCE_USERNAME=mwager

@@ -113,7 +113,7 @@ define(function(require) {
                 });
 
                 it('should store even more data', function(done) {
-                    var start = window.performance.now();
+                    var start = window.__now();
                     var LEN = 1; // TODO figure out how to store more!
                     var self = this;
 
@@ -122,7 +122,7 @@ define(function(require) {
                             function __saved(err) {
                                 expect(!!err).to.equal(false);
 
-                                var t = (window.performance.now() - start) / 1000;
+                                var t = (window.__now() - start) / 1000;
                                 log('Isolation WebSQLStorage: stored ~' +
                                     window.round(LARGE_LEN/factor/factor, 3) + 'MB in ~' + t + 's');
 
@@ -200,12 +200,12 @@ define(function(require) {
                 });
 
                 it('should store even more data', function(done) {
-                    var start = window.performance.now();
+                    var start = window.__now();
                     this.idbStorage.save(TMP_KEY, LARGE_OBJECT,
                         function __saved(err) {
                             expect(!!err).to.equal(false);
 
-                            var t = (window.performance.now() - start) / 1000;
+                            var t = (window.__now() - start) / 1000;
                             log('Isolation IDBStorage: stored ~' +
                                 window.round(LARGE_LEN/factor/factor, 3) + 'MB in ~' + t + 's');
 
@@ -285,7 +285,7 @@ define(function(require) {
                                 expect(err).to.equal(null);
 
                                 if(--len === 0) {
-                                    var t = (window.performance.now() - start) / 1000;
+                                    var t = (window.__now() - start) / 1000;
                                     log('time storing ' + lenO + ' rows: ~' + window.round(t, 3) + 's');
                                     done();
                                 }
@@ -295,7 +295,7 @@ define(function(require) {
                             });
                         }
 
-                        start = window.performance.now();
+                        start = window.__now();
                         iter();
                     });
 
@@ -345,14 +345,14 @@ define(function(require) {
                             return done();
                         }
 
-                        var start = window.performance.now();
+                        var start = window.__now();
 
                         this.storage.save(this.KEY, {aString: BIG_STRING}, function(err, data) {
                             expect(err).to.equal(null);
                             expect(BIG_STRING).to.equal(data.aString);
 
                             // show some stats
-                            var time = (window.performance.now() - start) / 1000;
+                            var time = (window.__now() - start) / 1000;
                             log('It took ~' + window.round(time, 3) + 's to store ' + size/factor/factor +
                                 'MB of data using the ' + adapterID + ' adapter');
 
@@ -364,14 +364,14 @@ define(function(require) {
                             return done();
                         }
 
-                        var start = window.performance.now();
+                        var start = window.__now();
 
                         this.storage.get(this.KEY, function(err, data) {
 
                             expect(typeof data.aString).to.not.equal('undefined');
 
                             // show some stats
-                            var time = (window.performance.now() - start) / 1000;
+                            var time = (window.__now() - start) / 1000;
                             log('It took ~' + window.round(time, 3) + 's to read ' + size/factor/factor +
                                 'MB of data using the ' + adapterID + ' adapter');
 
