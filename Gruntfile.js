@@ -28,6 +28,12 @@ mountFolder = function (connect, dir) {
 module.exports = function (grunt) {
     // TODO checkout more
     var browsers = [{
+        browserName: 'iphone',
+        platform: 'OS X 10.8',
+        version: '6.1',
+        'device-orientation': 'portrait'
+    },
+    {
         browserName: 'firefox',
         version: '19',
         platform: 'XP'
@@ -37,7 +43,15 @@ module.exports = function (grunt) {
     }, {
         browserName: 'chrome',
         platform: 'linux'
-    }, {
+    },
+
+    // IE:
+    {
+        browserName: 'internet explorer',
+        platform: 'WIN8',
+        'browser-version': '11'
+    },
+    {
         browserName: 'internet explorer',
         platform: 'WIN8',
         version: '10'
@@ -45,7 +59,10 @@ module.exports = function (grunt) {
         browserName: 'internet explorer',
         platform: 'VISTA',
         version: '9'
-    }, {
+    },
+
+    // opera:
+    {
         browserName: 'opera',
         platform: 'Windows 2008',
         version: '12'
@@ -91,12 +108,14 @@ module.exports = function (grunt) {
         'saucelabs-mocha': {
             all: {
                 options: {
+                    testname: 'VanillaStorage.js mocha tests',
                     urls: ['http://mwager.github.io/VanillaStorage/test/'],
                     tunnelTimeout: 5,
-                    build: process.env.TRAVIS_JOB_ID,
-                    concurrency: 3,
+                    // build: process.env.TRAVIS_JOB_ID,
+
                     browsers: browsers,
-                    testname: 'mocha tests',
+                    concurrency: 7,
+
                     tags: ['master']
                 }
             }
