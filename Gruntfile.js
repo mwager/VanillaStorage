@@ -40,9 +40,17 @@ module.exports = function (grunt) {
     }, {
         browserName: 'chrome',
         platform: 'XP'
-    }, {
-        browserName: 'chrome',
-        platform: 'linux'
+    },
+
+    {
+        platform: 'linux',
+        browserName: 'chrome'
+    },
+    {
+        platform: 'linux',
+        version: '4.0',
+        // 'device-type' = "tablet"
+        'device-orientation': 'portrait'
     },
 
     // IE:
