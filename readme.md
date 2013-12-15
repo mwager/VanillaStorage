@@ -157,6 +157,7 @@ Run the suite in real browsers via `testem`:
 
 ## TODOs ##
 * search the repo for `TODO`...
+* IDB: *one* object-store with many keys?!
 * figure out way to store more data using phantomjs. increase in storageTest, see TODO. or only on browsers? testem etc...
 
     $ grunt test-server &
