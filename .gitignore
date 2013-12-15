@@ -1,7 +1,4 @@
-
-# here, we need the bower_components to be in the repo:
-# /bower_components
-
+/bower_components
 /node_modules
 
 # phantomjs storage dir

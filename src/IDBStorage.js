@@ -17,7 +17,8 @@
 
     function factory(helpers) {
         var ensureCallback = helpers.ensureCallback,
-            parseKey       = helpers.parseKey;
+            parseKey       = helpers.parseKey,
+            out            = helpers.out;
 
         var IDBStorage = function() {
             if(!this.isValid()) {
@@ -184,16 +185,17 @@
                         };
                     }
                     catch(e) {
-                        log(key, 'IDB Error put: ', e, ' data: ', data);
+                        out(key, 'IDB Error put: ', e, ' data: ', data);
                         return callback(e);
                     }
                 }
                 catch(e) {
-                    log(key, e);
+                    out(key, e);
                     return callback(e);
                 }
                 //});
             },
+
 
             delete: function(key, callback) {
                 callback = ensureCallback(callback);

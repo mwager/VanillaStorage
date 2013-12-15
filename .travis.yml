@@ -5,10 +5,6 @@ node_js:
 notifications:
   email: true
 
-env:
-  global:
-    - NODE_ENV=whatever
-
 before_script:
   - "export PHANTOMJS_EXECUTABLE='phantomjs --local-to-remote-url-access=yes --ignore-ssl-errors=yes --local-storage-path=. --local-storage-quota=10000000000000'"
   - "export DISPLAY=:99.0"
@@ -17,6 +13,7 @@ before_script:
   # - sleep 5
   # - "cd casperjs && git checkout tags/1.0.2 && cd .."
   - "bower install"
+  - "./node_modules/.bin/jshint ."
 
 #script:
 #  - "DISPLAY=:99.0 grunt test"

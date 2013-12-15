@@ -10,6 +10,7 @@
     function factory(helpers) {
         var ensureCallback = helpers.ensureCallback,
             parseKey       = helpers.parseKey;
+            // out            = helpers.out
 
         var WebSQLStorage = function() {
             if(!this.isValid()) {
@@ -53,7 +54,8 @@
                     }
                 }
                 catch(e) {
-                    log('ERROR opening websql database', e); // TODO raus
+                    return callback('error opening websql database: ' +
+                        e.message ? e.message : e);
                 }
 
                 if(!this.db) {

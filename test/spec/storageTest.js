@@ -72,6 +72,8 @@ define(function(require) {
 
     describe('VanillaStorage.js Storage Abstraction', function () {
 
+        // ------------------------------------------
+        // TODO zu *einer* Methode zusammenführen
         function runSuiteForWebSQLStorage() {
             describe('Isolation :: WebSQLStorage', function () {
                 before(function(done) {
@@ -113,7 +115,7 @@ define(function(require) {
                 });
 
                 it('should store even more data', function(done) {
-                    var start = window.performance.now();
+                    var start = window.__now();
                     var LEN = 1; // TODO figure out how to store more!
                     var self = this;
 
@@ -122,7 +124,7 @@ define(function(require) {
                             function __saved(err) {
                                 expect(!!err).to.equal(false);
 
-                                var t = (window.performance.now() - start) / 1000;
+                                var t = (window.__now() - start) / 1000;
                                 log('Isolation WebSQLStorage: stored ~' +
                                     window.round(LARGE_LEN/factor/factor, 3) + 'MB in ~' + t + 's');
 
@@ -139,7 +141,6 @@ define(function(require) {
                 });
             });
         }
-
         function runSuiteForIDBStorage() {
             describe('Isolation :: IDBStorage', function () {
                 before(function(done) {
@@ -200,12 +201,12 @@ define(function(require) {
                 });
 
                 it('should store even more data', function(done) {
-                    var start = window.performance.now();
+                    var start = window.__now();
                     this.idbStorage.save(TMP_KEY, LARGE_OBJECT,
                         function __saved(err) {
                             expect(!!err).to.equal(false);
 
-                            var t = (window.performance.now() - start) / 1000;
+                            var t = (window.__now() - start) / 1000;
                             log('Isolation IDBStorage: stored ~' +
                                 window.round(LARGE_LEN/factor/factor, 3) + 'MB in ~' + t + 's');
 
@@ -215,6 +216,7 @@ define(function(require) {
                 });
             });
         }
+        // ------------------------------------------
 
         var wsql = new WebSQLStorage();
         if(wsql.isValid()) {
@@ -229,42 +231,44 @@ define(function(require) {
         // ----------- run for both adapters: idb and websql
         function runSuiteForCurrentAdapter(adapterID) {
 
-            describe('Abstraction: CRUD Adapter implementing IDB or WebSQL under the hood', function() {
+            describe('Abstraction: VanillaStorage Frontent implementing IDB or WebSQL under the hood', function() {
+
+                before(function(done) {
+                    this.isIndexedDBAdapter = /indexeddb/.test(adapterID);
+
+                    this.keys = [
+                        'tmp',
+                        'anotherkey'
+                    ];
+
+                    this.KEY = this.keys[0];
+
+                    // for indexed db, we must pass the keys
+                    // try force the adapter, but this cannot work in all browsers...
+                    var storageOptions = {
+                        adapterID: adapterID,
+                        keys:      this.keys
+                    };
+
+                    this.vanilla = new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
+                        if(err) {
+                            log('ERROR STORAGE: ' + err);
+                            return done();
+                            // throw err;
+                        }
+
+                        // self.vanilla = this;
+                        done();
+                    });
+                });
+
                 describe('Basic CRUD (adapter: ' + adapterID + ')', function() {
 
-                    before(function(done) {
-                        this.keys = [
-                            'tmp',
-                            'anotherkey'
-                        ];
-
-                        this.KEY = this.keys[0];
-
-                        // for indexed db, we must pass the keys
-                        // try force the adapter, but this cannot work in all browsers...
-                        var storageOptions = {
-                            adapterID: adapterID,
-                            keys:      this.keys
-                        };
-
-                        this.storage = new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
-                            if(err) {
-                                log('ERROR STORAGE: ' + err);
-                                return done();
-                                // throw err;
-                            }
-
-                            // self.storage = this;
-                            done();
-                        });
-
-                    });
-
                     it('should store data', function(done) {
-                        /*if(!this.storage) {
+                        /*if(!this.vanilla) {
                             return done();
                         }*/
-                        this.storage.save(this.KEY, DEMO_DATA, function(err, data) {
+                        this.vanilla.save(this.KEY, DEMO_DATA, function(err, data) {
                             expect(err).to.equal(null);
                             expect(data.foo).to.equal(DEMO_DATA.foo);
                             done();
@@ -272,7 +276,7 @@ define(function(require) {
                     });
 
                     it('should store lots of "rows"m for testing performance', function(done) {
-                        if(!this.storage) {
+                        if(!this.vanilla) {
                             return done();
                         }
                         var len = 200; // bei 100 websql in chrome bereits 4 secs !
@@ -281,11 +285,11 @@ define(function(require) {
                         var self = this;
 
                         function iter() {
-                            self.storage.save(self.KEY, DEMO_DATA, function(err) {
+                            self.vanilla.save(self.KEY, DEMO_DATA, function(err) {
                                 expect(err).to.equal(null);
 
                                 if(--len === 0) {
-                                    var t = (window.performance.now() - start) / 1000;
+                                    var t = (window.__now() - start) / 1000;
                                     log('time storing ' + lenO + ' rows: ~' + window.round(t, 3) + 's');
                                     done();
                                 }
@@ -295,15 +299,15 @@ define(function(require) {
                             });
                         }
 
-                        start = window.performance.now();
+                        start = window.__now();
                         iter();
                     });
 
                     it('should read data', function(done) {
-                        if(!this.storage) {
+                        if(!this.vanilla) {
                             return done();
                         }
-                        this.storage.get(this.KEY, function(err, data) {
+                        this.vanilla.get(this.KEY, function(err, data) {
                             expect(err).to.equal(null);
                             expect(data.foo).to.equal(DEMO_DATA.foo);
                             done();
@@ -311,15 +315,15 @@ define(function(require) {
                     });
 
                     it('should delete data', function(done) {
-                        if(!this.storage) {
+                        if(!this.vanilla) {
                             return done();
                         }
                         var self = this;
-                        this.storage.delete(this.KEY, function(err) {
+                        this.vanilla.delete(this.KEY, function(err) {
                             expect(err).to.equal(null);
 
                             // really gone?
-                            self.storage.get(self.KEY, function(err) {
+                            self.vanilla.get(self.KEY, function(err) {
                                 // NO DATA FOUND
                                 expect(typeof err).to.not.equal('undefined');
                                 done();
@@ -328,10 +332,10 @@ define(function(require) {
                     });
 
                     it('should nuke all data', function(done) {
-                        if(!this.storage) {
+                        if(!this.vanilla) {
                             return done();
                         }
-                        this.storage.nuke(function(err) {
+                        this.vanilla.nuke(function(err) {
                             expect(err).to.equal(null);
                             done();
                         });
@@ -340,19 +344,19 @@ define(function(require) {
 
                 describe('Advanced CRUD (adapter: ' + adapterID + ')', function() {
                     it('should save lots of data at once', function(done) {
-                        if(!this.storage) {
+                        if(!this.vanilla) {
                             log('STORAGE-TESTS: No storage instance for adapterID=' + adapterID + ' ???');
                             return done();
                         }
 
-                        var start = window.performance.now();
+                        var start = window.__now();
 
-                        this.storage.save(this.KEY, {aString: BIG_STRING}, function(err, data) {
+                        this.vanilla.save(this.KEY, {aString: BIG_STRING}, function(err, data) {
                             expect(err).to.equal(null);
                             expect(BIG_STRING).to.equal(data.aString);
 
                             // show some stats
-                            var time = (window.performance.now() - start) / 1000;
+                            var time = (window.__now() - start) / 1000;
                             log('It took ~' + window.round(time, 3) + 's to store ' + size/factor/factor +
                                 'MB of data using the ' + adapterID + ' adapter');
 
@@ -360,22 +364,90 @@ define(function(require) {
                         });
                     });
                     it('should read lots of data at once', function(done) {
-                        if(!this.storage) {
+                        if(!this.vanilla) {
                             return done();
                         }
 
-                        var start = window.performance.now();
+                        var start = window.__now();
 
-                        this.storage.get(this.KEY, function(err, data) {
-
+                        this.vanilla.get(this.KEY, function(err, data) {
                             expect(typeof data.aString).to.not.equal('undefined');
 
                             // show some stats
-                            var time = (window.performance.now() - start) / 1000;
+                            var time = (window.__now() - start) / 1000;
                             log('It took ~' + window.round(time, 3) + 's to read ' + size/factor/factor +
                                 'MB of data using the ' + adapterID + ' adapter');
 
                             done();
+                        });
+                    });
+                });
+
+                describe('Error Handling (adapter: ' + adapterID + ')', function() {
+                    it('should not save corrupted data', function(done) {
+                        var data = {fn: function(a) {return a+2;}};
+                        this.vanilla.save(this.KEY, data, function(err) {
+                            expect(typeof err).to.equal('object');
+                            done();
+                        });
+                    });
+
+                    // NOTE: IDB needs objects to be saved, no primitives allowed...
+                    // IDB error "Evaluating the object store's key path did not yield a value"
+                    it('should not save numbers only on indexed db', function(done) {
+                        var data = 42;
+                        var self = this;
+                        this.vanilla.save(this.KEY, data, function(err) {
+                            if(self.isIndexedDBAdapter) {
+                                expect(typeof err).to.equal('object');
+                            }
+                            else {
+                                expect(err).to.equal(null);
+                            }
+                            done();
+                        });
+                    });
+                    it('should not save bools only on indexed db', function(done) {
+                        var data = false;
+                        var self = this;
+                        this.vanilla.save(this.KEY, data, function(err) {
+                            if(self.isIndexedDBAdapter) {
+                                expect(typeof err).to.equal('object');
+                            }
+                            else {
+                                expect(err).to.equal(null);
+                            }
+                            done();
+                        });
+                    });
+                    it('should not save strings only on indexed db', function(done) {
+                        var data = 'Hello world';
+                        var self = this;
+                        this.vanilla.save(this.KEY, data, function(err) {
+                            if(self.isIndexedDBAdapter) {
+                                expect(typeof err).to.equal('object');
+                            }
+                            else {
+                                expect(err).to.equal(null);
+                            }
+                            done();
+                        });
+                    });
+                    // ---------------------------------------------------------
+
+                    it('should automatically parse keys', function(done) {
+                        var self    = this;
+                        var vanilla = this.vanilla;
+                        var data    = {foo: 'bar'};
+                        var key     = '/:' + this.KEY + '/';
+
+                        vanilla.save(key, data, function(err) {
+                            expect(err).to.equal(null);
+
+                            vanilla.get(self.KEY, function(err, data) {
+                                expect(data).to.equal(data);
+                                done();
+                            });
                         });
                     });
                 });

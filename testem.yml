@@ -18,7 +18,7 @@
 launch_in_ci:
     # NOT NEEDD. run grunt test to run via phantomjs.
     # - PhantomJS
-    - Firefox
+    - Safari
     - Firefox
     - Opera
     - Chrome

@@ -2,9 +2,19 @@
 
 [![Build Status](https://travis-ci.org/mwager/VanillaStorage.png?branch=master)](https://travis-ci.org/mwager/VanillaStorage)
 
-WORK IN PROGRESS, check all TODOs !!!
+[![Selenium Test Status](https://saucelabs.com/buildstatus/mwager)](https://saucelabs.com/u/mwager)
+
+[![Selenium Test Status](https://saucelabs.com/browser-matrix/mwager.svg)](https://saucelabs.com/u/mwager)
+
+[Run the tests in your browser](http://mwager.github.io/VanillaStorage/test/)
+
+[Watch the tests on saucelabs](https://saucelabs.com/u/mwager)
 
 Simple key/value based storage abstraction lib for usage in browser based environments. Uses IndexedDB with fallback to [deprecated but still widely supported and needed] WebSQL.
+
+## Demo ##
+
+[JSFiddle](http://jsfiddle.net/G8h2V/7/) (Use chrome dev tools to inspect the stored IndexedDB data)
 
 ## Installation ##
 
@@ -14,14 +24,30 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
 
 ### From source  ###
 
-    $ git clone ...
+    $ git clone https://github.com/mwager/VanillaStorage.git
+    $ cd VanillaStorage
     $ npm install && bower install
-    $ jshint . # TODO
     $ grunt test
-    $ grunt build . # TODO requirejs build for one file. just need a config.js somewhere!
+
+### Optimized source ###
+
+See `dist/vanilla-storage.js`, or if you want to build it yourself:
+
+    $ grunt build # creates dist/vanilla-storage.js for production usage
 
 
-Either include the files via script tags or add something like the following to your requirejs config:
+### Global vs. AMD ###
+
+Either include the files via script tags:
+
+```html
+<script src="path/to/vanilla-storage/src/storageHelpers.js"></script>
+<script src="path/to/vanilla-storage/src/WebSQLStorage.js"></script>
+<script src="path/to/vanilla-storage/src/IDBStorage.js"></script>
+<script src="path/to/vanilla-storage/src/VanillaStorage.js"></script>
+```
+
+...or add something like the following to your requirejs config:
 
 ```javascript
 ...
@@ -40,9 +66,9 @@ Either include the files via script tags or add something like the following to 
 The API is all async and pretty simple, there are 4 public methods:
 
 * `get(key, fn)`
-* `save(key, data)`
-* `delete(key)`
-* `nuke()`
+* `save(key, data, fn)`
+* `delete(key, fn)`
+* `nuke(fn)`
 
 Callback functions always have the error as first parameter, data as second if any. So if the first parameter of a callback is `undefined` it means the operation was successful.
 
@@ -76,8 +102,8 @@ var readyToUseAPI = function(err) {
 };
 
 // pre-checks possible:
-VanillaStorage.isValid('websql-storage')
-VanillaStorage.isValid('indexeddb-storage')
+console.log(VanillaStorage.isValid('websql-storage'))
+console.log(VanillaStorage.isValid('indexeddb-storage'))
 
 // NOTE: you must provide a `ready`-calback
 vanilla = new VanillaStorage({
@@ -127,6 +153,8 @@ Run the suite in real browsers via `testem`:
 
     $ grunt testem
 
+
+
 ## TODOs ##
 * figure out way to store more data using phantomjs. increase in storageTest, see TODO. or only on browsers? testem etc...
 
@@ -138,4 +166,4 @@ Run the suite in real browsers via `testem`:
 
     $ grunt test #fails too if too much data..
 
-* add testem support
+* more options: pass db name and version, ...

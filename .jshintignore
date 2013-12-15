@@ -2,9 +2,9 @@
 # run jshint from the root:
 # $ jshint .
 
+utils
 dist
 bower_components
 node_modules
 test/lib
 phantomjs_tests.js
-utils

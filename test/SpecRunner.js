@@ -1,7 +1,7 @@
 /**
 * Global test setup, included in the test/index*.html files
 */
-(function() {
+(function __globalHelpers() {
     'use strict';
 
     // global log helper and error handler for tests
@@ -9,6 +9,8 @@
         if(!window.console || !window.console.log) {
             return false;
         }
+
+        arguments[0] = '[LOG] ' + arguments[0];
 
         if(window.results && typeof arguments[1] !== 'boolean') {
             var span         = document.createElement('span');
@@ -34,31 +36,31 @@
     };
 
     // benchmarks
-    try {
-        // fix for uncaught error on firefox:
-        // "setting a property that has only a getter"
-        window.performance = window.performance || {};
+    window.__now = function() {
+        if(!window.performance) {
+            return new Date().getTime();
+        }
 
-        window.performance.now = (function() {
-            return window.performance.now       ||
-                 window.performance.mozNow    ||
-                 window.performance.msNow     ||
-                 window.performance.oNow      ||
-                 window.performance.webkitNow ||
-                 function() { return new Date().getTime(); };
-        })();
-    }catch(e) {}
+        if(window.performance.now) {
+            return window.performance.now();
+        } else if(window.performance.mozNow) {
+            window.performance.mozNow();
+        } else if(window.performance.msNow) {
+            window.performance.msNow();
+        } else if(window.performance.oNow) {
+            window.performance.oNow();
+        } else if(window.performance.webkitNow) {
+            window.performance.webkitNow();
+        } else {
+            return new Date().getTime();
+        }
+    };
 
     window.round = function(num, fac) {
         fac = (fac === '' || fac === 0 ? 1 : Math.pow(10, fac));
         num = Math.round(num * fac) / fac;
         return num;
     };
-
-    /*window.__app_config__ = {
-        baseUrl: '',
-        apiBase: ''
-    };*/
 
     // --- mocha config ---
 
@@ -132,7 +134,7 @@ function() {
     var start;
 
     function allTestsDone() {
-        var time = window.round( (window.performance.now() - start) / 1000, 2);
+        var time = window.round( (window.__now() - start) / 1000, 2);
 
         log('***** SpecRunner: all tests done in ~' + time +
             's - # assertions: ' + window.mocha.assertionCounter + ' *****');
@@ -151,7 +153,7 @@ function() {
         window.results = document.getElementById('results');
 
         var bootTests = function() {
-            start = window.performance.now();
+            start = window.__now();
 
             if (window.mochaPhantomJS) {
                 window.mochaPhantomJS.run(/*allTestsDone*/);
