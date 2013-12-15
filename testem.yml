@@ -8,12 +8,13 @@
 # "framework" and "src_files" are irrelevant in this case
 "test_page": "test/index_testem.html"
 
-# launch_in_dev:
-#     - Safari
-#     - Firefox
-#     - Opera
-#     - Chrome
-#     - Chrome Canary
+launch_in_dev:
+    - Safari
+    - Firefox
+    - Opera
+    - Chrome
+    # - Chrome Canary
+    # IE...
 
 launch_in_ci:
     # NOT NEEDD. run grunt test to run via phantomjs.

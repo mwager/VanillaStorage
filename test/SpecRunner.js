@@ -90,7 +90,7 @@
     // is for, and bailing everytime you see a global is going to make testing 3rd
     // party code especially difficult."
     window.mocha.setup({
-        timeout: 10000, // 60000 * 10, // 5 minutes, TODO später weniger ! Grund: storage tests
+        timeout: 60000, // 60000 * 10, // 5 minutes, TODO später weniger ! Grund: storage tests
         ui: 'bdd',
         reporter: 'html',
         ignoreLeaks: true
