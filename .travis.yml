@@ -13,6 +13,7 @@ before_script:
   # - sleep 5
   # - "cd casperjs && git checkout tags/1.0.2 && cd .."
   - "bower install"
+  - "./node_modules/.bin/jshint ."
 
 #script:
 #  - "DISPLAY=:99.0 grunt test"
