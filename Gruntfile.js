@@ -40,9 +40,17 @@ module.exports = function (grunt) {
     }, {
         browserName: 'chrome',
         platform: 'XP'
-    }, {
-        browserName: 'chrome',
-        platform: 'linux'
+    },
+
+    {
+        platform: 'linux',
+        browserName: 'chrome'
+    },
+    {
+        platform: 'linux',
+        version: '4.0',
+        // 'device-type' = "tablet"
+        'device-orientation': 'portrait'
     },
 
     // IE:
@@ -81,6 +89,13 @@ module.exports = function (grunt) {
         customConfig: customConfig,
 
         connect: {
+            server: {
+                options: {
+                    base: '',
+                    port: 9999
+                }
+            },
+
             // starte eine node server in diesem verzeichnis...
             testserver: {
                 options: {
@@ -109,9 +124,13 @@ module.exports = function (grunt) {
             all: {
                 options: {
                     testname: 'VanillaStorage.js mocha tests',
+
+                    // hmm... rtm... TODO urls: ['http://127.0.0.1:9999/test/index.html'],
+                    // problem with this: we need to merge the master into gh-pages everytime
+                    // (but we still want to do this to make the tests available in public)
                     urls: ['http://mwager.github.io/VanillaStorage/test/'],
-                    tunnelTimeout: 5,
-                    // build: process.env.TRAVIS_JOB_ID,
+                    tunnelTimeout: 25,
+                    build: process.env.TRAVIS_JOB_ID,
 
                     browsers: browsers,
                     concurrency: 7,
@@ -268,6 +287,7 @@ module.exports = function (grunt) {
     // $ export SAUCE_ACCESS_KEY=API_KEY
     grunt.registerTask('test-sauce', [
         // 'connect:testserver',
+        'connect:server',
         'saucelabs-mocha'
     ]);
 

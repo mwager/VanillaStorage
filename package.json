@@ -52,6 +52,7 @@
     "blanket": "~1.1.5",
     "phantomjs": "~1.9.2-4",
     "grunt-text-replace": "~0.3.10",
-    "jshint": "~2.3.0"
+    "jshint": "~2.3.0",
+    "testem": "~0.5.15"
   }
 }
