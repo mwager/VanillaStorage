@@ -14,7 +14,7 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
 
 ## Demo ##
 
-[JSFiddle](http://jsfiddle.net/G8h2V/7/) (Use chrome dev tool to check the stored Indeced-DB Data)
+[JSFiddle](http://jsfiddle.net/G8h2V/7/) (Use chrome dev tools to inspect the stored IndexedDB data)
 
 ## Installation ##
 
@@ -24,7 +24,8 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
 
 ### From source  ###
 
-    $ git clone git@github.com:mwager/VanillaStorage.git
+    $ git clone https://github.com/mwager/VanillaStorage.git
+    $ cd VanillaStorage
     $ npm install && bower install
     $ grunt test
 

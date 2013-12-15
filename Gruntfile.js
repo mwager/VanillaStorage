@@ -132,7 +132,7 @@ module.exports = function (grunt) {
                 stdout: true
             },
             testem: {
-                command: 'testem ci',
+                command: 'testem ci -P 5 -T 60',
                 stdout: true
             }
         }, // end exec

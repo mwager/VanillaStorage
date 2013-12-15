@@ -320,6 +320,10 @@ define(function(require) {
 
                             // really gone?
                             self.storage.get(self.KEY, function(err) {
+                                if(err) {
+                                    throw err;
+                                }
+
                                 // NO DATA FOUND
                                 expect(typeof err).to.not.equal('undefined');
                                 done();
@@ -367,6 +371,9 @@ define(function(require) {
                         var start = window.__now();
 
                         this.storage.get(this.KEY, function(err, data) {
+                            if(err) {
+                                throw err;
+                            }
 
                             expect(typeof data.aString).to.not.equal('undefined');
 
