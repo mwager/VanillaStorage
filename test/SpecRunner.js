@@ -10,6 +10,8 @@
             return false;
         }
 
+        arguments[0] = '[LOG] ' + arguments[0];
+
         if(window.results && typeof arguments[1] !== 'boolean') {
             var span         = document.createElement('span');
             // span.style.color = color;

@@ -17,7 +17,8 @@
 
     function factory(helpers) {
         var ensureCallback = helpers.ensureCallback,
-            parseKey       = helpers.parseKey;
+            parseKey       = helpers.parseKey,
+            out            = helpers.out;
 
         var IDBStorage = function() {
             if(!this.isValid()) {
@@ -76,7 +77,7 @@
                         });
                         // store.createIndex(key, key, {unique:true});
 
-                        console.log('---indexed-db--- created store: ' + key, store);
+                        log('---indexed-db--- created store: ' + key, store);
                     }
                 };
 
@@ -184,16 +185,17 @@
                         };
                     }
                     catch(e) {
-                        console.log(key, 'IDB Error put: ', e, ' data: ', data);
+                        out(key, 'IDB Error put: ', e, ' data: ', data);
                         return callback(e);
                     }
                 }
                 catch(e) {
-                    console.log(key, e);
+                    out(key, e);
                     return callback(e);
                 }
                 //});
             },
+
 
             delete: function(key, callback) {
                 callback = ensureCallback(callback);

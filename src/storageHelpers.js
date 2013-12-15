@@ -29,9 +29,22 @@
             key = key.replace(/[.]/g, '');
 
             return key;
+        },
+
+        // custom log helper
+        out: function() {
+            if(!window.console || !console.log) {
+                return false;
+            }
+
+            arguments[0] = '[Vanilla LOG] ' + arguments[0];
+
+            console.log.apply(console, arguments);
         }
     };
 
+
+    // Export using AMD...
     if(typeof define === 'function' && define.amd) {
         define([/* no deps */], function() {
             return helpers;
