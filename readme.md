@@ -12,6 +12,10 @@
 
 Simple key/value based storage abstraction lib for usage in browser based environments. Uses IndexedDB with fallback to [deprecated but still widely supported and needed] WebSQL.
 
+## Demo ##
+
+[JSFiddle](http://jsfiddle.net/G8h2V/7/) (Use chrome dev tool to check the stored Indeced-DB Data)
+
 ## Installation ##
 
 ### Via bower  ###
