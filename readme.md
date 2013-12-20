@@ -2,15 +2,11 @@
 
 [![Build Status](https://travis-ci.org/mwager/VanillaStorage.png?branch=master)](https://travis-ci.org/mwager/VanillaStorage)
 
-[![Selenium Test Status](https://saucelabs.com/buildstatus/mwager)](https://saucelabs.com/u/mwager)
-
-[![Selenium Test Status](https://saucelabs.com/browser-matrix/mwager.svg)](https://saucelabs.com/u/mwager)
-
 [Run the tests in your browser](http://mwager.github.io/VanillaStorage/test/)
 
 [Watch the tests on saucelabs](https://saucelabs.com/u/mwager)
 
-Simple key/value based storage abstraction lib for usage in browser based environments. Uses IndexedDB with fallback to [deprecated but still widely supported and needed] WebSQL.
+Simple key/value based storage abstraction lib for usage in browser based environments. Uses IndexedDB with fallback to [deprecated but still widely supported and needed] WebSQL. If also WebSQL is not available (eg IE <= 9) it will fallback to `lwindow.ocalStorage`.
 
 ## Demo ##
 
@@ -21,6 +17,7 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
 ### Via bower  ###
 
     $ bower info vanilla-storage
+    $ bower install vanilla-storage
 
 ### From source  ###
 
@@ -34,6 +31,10 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
 See `dist/vanilla-storage.js`, or if you want to build it yourself:
 
     $ grunt build # creates dist/vanilla-storage.js for production usage
+
+### Dependencies ###
+
+* [LocalStorage.js](https://github.com/mwager/LocalStorage)
 
 
 ### Global vs. AMD ###
@@ -156,7 +157,9 @@ Run the suite in real browsers via `testem`:
 
 
 ## TODOs ##
+* localStorage as second fallback ?
 * search the repo for `TODO`...
+* IDB: *one* object-store with many keys?!
 * figure out way to store more data using phantomjs. increase in storageTest, see TODO. or only on browsers? testem etc...
 
     $ grunt test-server &
@@ -168,3 +171,4 @@ Run the suite in real browsers via `testem`:
     $ grunt test #fails too if too much data..
 
 * more options: pass db name and version, ...
+* create more advanced tests in more browsers

@@ -320,6 +320,9 @@ define(function(require) {
                         }
                         var self = this;
                         this.vanilla.delete(this.KEY, function(err) {
+                            if(err) {
+                                return console.error(err);
+                            }
                             expect(err).to.equal(null);
 
                             // really gone?
@@ -465,5 +468,9 @@ define(function(require) {
         if(VanillaStorage.isValid(adapterID)) {
             runSuiteForCurrentAdapter(adapterID);
         }
+
+        // unknown adapter-id -> will fallback to localStorage (-;
+        adapterID = 'local-storage-dummy';
+        runSuiteForCurrentAdapter(adapterID);
     });
 });

@@ -116,7 +116,9 @@ require.config({
         VanillaStorage: './src/VanillaStorage',
         WebSQLStorage:  './src/WebSQLStorage',
         IDBStorage:     './src/IDBStorage',
-        storageHelpers: './src/storageHelpers'
+        storageHelpers: './src/storageHelpers',
+
+        LocalStorage: './bower_components/LocalStorage/index'
     },
 
     shim: {

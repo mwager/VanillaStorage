@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "requirejs": "~2.1.5",
-    "almond": "~0.2.6"
+    "LocalStorage": "https://raw.github.com/mwager/LocalStorage/master/src/LocalStorage.js"
   },
   "devDependencies": {
     "mocha": "~1.15.1",
