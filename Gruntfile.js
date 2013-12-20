@@ -180,10 +180,12 @@ module.exports = function (grunt) {
                         VanillaStorage: './VanillaStorage',
                         WebSQLStorage:  './WebSQLStorage',
                         IDBStorage:     './IDBStorage',
-                        storageHelpers: './storageHelpers'
+                        storageHelpers: './storageHelpers',
+
+                        LocalStorage: '../bower_components/LocalStorage/index'
                     },
 
-                    preserveLicenseComments: false,
+                    preserveLicenseComments: true,
                     useStrict: true,
                     wrap: true
                 }
