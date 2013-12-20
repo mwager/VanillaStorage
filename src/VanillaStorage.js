@@ -17,22 +17,13 @@
 (function() {
     'use strict';
 
-    function factory(WebSQLStorage, IDBStorage, helpers) {
+    function factory(LocalStorage, WebSQLStorage, IDBStorage, helpers) {
         var ensureCallback = helpers.ensureCallback;
 
         // Order is relevant! first valid will be taken
         var adaptersWeSupport = {
-            // TODO idb first! passt das?
-            // on android, idb also works in the webview!
-            // but should we go with phonegap "supported” websql!?
-            // check the mocha storage tests in cordova shell
-            // and compare times!!!
             'indexeddb-storage': new IDBStorage(),
             'websql-storage'   : new WebSQLStorage()
-
-            // we do not support local storage here as a fallback,
-            // as the size limits are not acceptable
-            // 'local-storage' : new LocalStorage()
         };
 
         /**
@@ -71,8 +62,14 @@
             }
 
             if(!this.adapter || !this.adapter.isValid()) {
-                var errMsg = 'Storage: No valid adapter: ' + this.adapterID;
-                return initCallback.call(self, errMsg);
+                // if idb and websql is not supported (eg ie<=9)
+                // we fallback to localstorage
+                this.localStorageFallback = true;
+                this.adapter = new LocalStorage();
+                return initCallback.call(self, null);
+
+                // var errMsg = 'Storage: No valid adapter: ' + this.adapterID;
+                // return initCallback.call(self, errMsg);
                 // throw new Error(errMsg);
             }
 
@@ -98,19 +95,71 @@
             },
 
             get: function(key, callback) {
-                this.adapter.get(key, callback);
+                callback = ensureCallback(callback);
+
+                if(this.localStorageFallback) {
+                    try {
+                        var data = this.adapter.get(key);
+                        callback(null, data);
+                    }
+                    catch(e) {
+                        callback(e);
+                    }
+                }
+                else {
+                    this.adapter.get(key, callback);
+                }
             },
 
             save: function(key, data, callback) {
-                this.adapter.save(key, data, callback);
+                callback = ensureCallback(callback);
+
+                if(this.localStorageFallback) {
+                    try {
+                        this.adapter.save(key, data);
+                        callback(null, data);
+                    }
+                    catch(e) {
+                        callback(e);
+                    }
+                }
+                else {
+                    this.adapter.save(key, data, callback);
+                }
             },
 
             delete: function(key, callback) {
-                this.adapter.delete(key, callback);
+                callback = ensureCallback(callback);
+
+                if(this.localStorageFallback) {
+                    try {
+                        this.adapter.delete(key);
+                        callback(null);
+                    }
+                    catch(e) {
+                        callback(e);
+                    }
+                }
+                else {
+                    this.adapter.delete(key, callback);
+                }
             },
 
             nuke: function(callback) {
-                this.adapter.nuke(callback);
+                callback = ensureCallback(callback);
+
+                if(this.localStorageFallback) {
+                    try {
+                        this.adapter.nuke();
+                        callback(null);
+                    }
+                    catch(e) {
+                        callback(e);
+                    }
+                }
+                else {
+                    this.adapter.nuke(callback);
+                }
             }
         };
 
@@ -129,11 +178,12 @@
     // Export using AMD support...
     if(typeof define === 'function' && define.amd) {
         define([
+                'LocalStorage',
                 'WebSQLStorage',
                 'IDBStorage',
                 'storageHelpers'
-            ], function(WebSQLStorage, IDBStorage, storageHelpers) {
-                var VanillaStorage = factory(WebSQLStorage, IDBStorage, storageHelpers);
+            ], function(LocalStorage, WebSQLStorage, IDBStorage, storageHelpers) {
+                var VanillaStorage = factory(LocalStorage, WebSQLStorage, IDBStorage, storageHelpers);
                 return VanillaStorage;
             }
         );
