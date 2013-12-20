@@ -1,6 +1,6 @@
 
 #/bower_components
-/utils
+#/utils
 /node_modules
 
 # phantomjs storage dir
