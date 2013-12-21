@@ -151,7 +151,7 @@ module.exports = function (grunt) {
                 stdout: true
             },
             testem: {
-                command: 'testem ci -P 5 -T 60',
+                command: 'testem ci -P 5',
                 stdout: true
             }
         }, // end exec
@@ -180,10 +180,12 @@ module.exports = function (grunt) {
                         VanillaStorage: './VanillaStorage',
                         WebSQLStorage:  './WebSQLStorage',
                         IDBStorage:     './IDBStorage',
-                        storageHelpers: './storageHelpers'
+                        storageHelpers: './storageHelpers',
+
+                        LocalStorage: '../bower_components/local-storage/src/LocalStorage'
                     },
 
-                    preserveLicenseComments: false,
+                    preserveLicenseComments: true,
                     useStrict: true,
                     wrap: true
                 }

@@ -118,7 +118,7 @@ require.config({
         IDBStorage:     './src/IDBStorage',
         storageHelpers: './src/storageHelpers',
 
-        LocalStorage: './bower_components/LocalStorage/index'
+        LocalStorage: './bower_components/local-storage/src/LocalStorage'
     },
 
     shim: {

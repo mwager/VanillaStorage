@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "requirejs": "~2.1.5",
-    "LocalStorage": "https://raw.github.com/mwager/LocalStorage/master/src/LocalStorage.js"
+    "local-storage": "~1.0.0"
   },
   "devDependencies": {
     "mocha": "~1.15.1",
