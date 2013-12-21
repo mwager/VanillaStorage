@@ -151,7 +151,7 @@ module.exports = function (grunt) {
                 stdout: true
             },
             testem: {
-                command: 'testem ci -P 5 -T 60',
+                command: 'testem ci -P 5',
                 stdout: true
             }
         }, // end exec
