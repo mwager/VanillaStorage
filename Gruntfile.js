@@ -182,7 +182,7 @@ module.exports = function (grunt) {
                         IDBStorage:     './IDBStorage',
                         storageHelpers: './storageHelpers',
 
-                        LocalStorage: '../bower_components/LocalStorage/index'
+                        LocalStorage: '../bower_components/local-storage/src/LocalStorage'
                     },
 
                     preserveLicenseComments: true,
