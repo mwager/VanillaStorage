@@ -141,6 +141,7 @@ function() {
         log('***** SpecRunner: all tests done in ~' + time +
             's - # assertions: ' + window.mocha.assertionCounter + ' *****');
 
+        // TODO this removes the progress canvas...
         document.getElementById('mocha-stats').innerHTML += ('<li>Assertions: <em>' +
             window.mocha.assertionCounter + '</em></li>');
     }
