@@ -17,10 +17,11 @@ launch_in_dev:
     # IE...
 
 launch_in_ci:
-    # NOT NEEDD. run grunt test to run via phantomjs.
+    # NOT NEEDED. run grunt test to run via phantomjs.
     # - PhantomJS
     - Safari
     - Firefox
     - Opera
     - Chrome
     - Chrome Canary
+    - IE

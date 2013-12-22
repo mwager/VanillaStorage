@@ -99,7 +99,7 @@
                         var result = e.target.result;
 
                         var res = !!result; // convert to bool
-                        var nothingFound = (res === false);
+                        var nothingFound = (res === false) || (!result || !result.data);
 
                         if(nothingFound) {
                             // nothing found

@@ -1,19 +1,19 @@
 /**
- * This suite tests our own clientside storage abstraction lib
+ * VanillaStorage.js testsuite
+ *
+ * There are 2 steps of testing:
+ * -----------------------------
+ * 1. we run a suite for each of the different adapters
+ *    (= idb, websql, localStorage) in isolation
+ * 2. we run a suite for the vanilla-frontend forcing each specified adapter
+ *    behind the scenes by passing it as config
+ *
+ * This way we are testing all the things in isolation and together as a whole.
  *
  * @author Michael Wager <mail@mwager.de>
  */
 define(function(require) {
     'use strict';
-
-    // What does this test do?
-    // ----------------------
-    // First we run run isolated tests on the standalone IDB- and WebSQL
-    // Wrappers to test and document the api usage.
-    // Then we test the Storage Frontend (VanillaStorage), which abstracts away
-    // the used storage engine. This works because both adapters
-    // (idb and websql) are exporting the same async interface, so basically
-    // "Storage" is just a simple proxy for the other libs
 
     // This class...
     var VanillaStorage = require('VanillaStorage');
@@ -22,9 +22,10 @@ define(function(require) {
     // isolation here)
     var IDBStorage    = require('IDBStorage');
     var WebSQLStorage = require('WebSQLStorage');
+    var LocalStorage  = require('LocalStorage');
 
     var DEMO_DATA = {foo: 'bar'};
-    var TMP_KEY   = 'tmp';
+    var TMP_KEY   = 'some-key';
 
     function getRandomBetween(min, max) {
         return parseInt(window.Math.random() * (max - min) + min, 10);
@@ -36,6 +37,11 @@ define(function(require) {
     var LARGE_LEN;
     var factor = 1024;
     var size   = 1.0 * factor * factor;
+
+    // TODO better? more tests, more data.
+    // If phantomjs makes trouble, do it only in REAL browsers!
+    var ua          = navigator.userAgent.toLowerCase();
+    var isPhantomjs = (/phantomjs/).test(ua);
 
     (function __generateDemoData() {
         var letters = 'abcdefghijklmnopqrstuvwxyz';
@@ -51,8 +57,10 @@ define(function(require) {
 
         BIG_STRING = BIG_STRING.join('');
 
-        // TODO increase 2 to 10 or more...
-        for(i = 0; i < 2; i ++) {
+        // use 10 MB on real browsers, 2MB on PhantomJS
+        var MAX = isPhantomjs ? 2 : 10;
+
+        for(i = 0; i < MAX; i ++) {
             var t = {};
             for(var j = 0; j < 10; j ++) {
                 t.largeString = BIG_STRING;
@@ -69,173 +77,136 @@ define(function(require) {
     })();
 
 
+    // ----- STEP #1 -----
+    function runSuiteForAdapterInIsolation(adapterID, callback) {
+        // do not run the tests if adapter is not valid in current browser
+        if(!VanillaStorage.isValid(adapterID) && adapterID !== 'local-storage-dummy') {
+            return callback('Not valid: ' + adapterID);
+        }
 
-    describe('VanillaStorage.js Storage Abstraction', function () {
+        describe('Isolation :: ' + adapterID, function () {
+            before(function(done) {
+                switch(adapterID) {
+                    case 'websql-storage':
+                        this.adapter = new WebSQLStorage();
+                        this.adapter.init(done);
+                        break;
+                    case 'indexeddb-storage':
+                        this.adapter = new IDBStorage();
+                        this.adapter.init(done);
+                        break;
+                    case 'local-storage-dummy':
+                        this.adapter = new LocalStorage();
+                        this.adapter.init(done);
+                        break;
+                    default:
+                        throw 'No valid adapterID: ' + adapterID;
+                }
+            });
 
-        // ------------------------------------------
-        // TODO zu *einer* Methode zusammenführen
-        function runSuiteForWebSQLStorage() {
-            describe('Isolation :: WebSQLStorage', function () {
-                before(function(done) {
-                    this.webSQLStorage = new WebSQLStorage();
-                    this.webSQLStorage.init(done);
+            it('should be initialized', function() {
+                expect(typeof this.adapter).to.equal('object');
+            });
+            it('should store data', function(done) {
+                var testData = ['hallo welt', {foo: 'bar'}];
+                this.adapter.save(TMP_KEY, testData, function(err, data) {
+                    expect(!!err).to.equal(false);
+                    expect(data[0]).to.equal('hallo welt');
+                    done();
                 });
+            });
+            it('should read the stored data', function(done) {
+                this.adapter.get(TMP_KEY, function(err, data) {
+                    expect(!!err).to.equal(false);
+                    expect(data[0]).to.equal('hallo welt');
+                    expect(data[1].foo).to.equal('bar');
+                    done();
+                });
+            });
+            it('should delete the stored data', function(done) {
+                var self = this;
+                this.adapter.delete(TMP_KEY, function(err) {
+                    if(err) {
+                        console.error('DAAAAAAAAAAAAAAAAMN', err, adapterID);
+                    }
 
-                it('should be initialized', function() {
-                    expect(typeof this.webSQLStorage).to.equal('object');
-                });
-                it('should store data', function(done) {
-                    var testData = ['hallo welt', {foo: 'bar'}];
-                    this.webSQLStorage.save(TMP_KEY, testData, function(err, data) {
-                        expect(!!err).to.equal(false);
-                        expect(data[0]).to.equal('hallo welt');
-                        done();
-                    });
-                });
-                it('should read the stored data', function(done) {
-                    this.webSQLStorage.get(TMP_KEY, function(err, data) {
-                        expect(!!err).to.equal(false);
-                        expect(data[0]).to.equal('hallo welt');
-                        expect(data[1].foo).to.equal('bar');
-                        done();
-                    });
-                });
-                it('should delete the stored data', function(done) {
-                    var self = this;
-                    this.webSQLStorage.delete(TMP_KEY, function(err) {
-                        expect(!!err).to.equal(false);
+                    expect(!!err).to.equal(false);
 
+                    setTimeout(function() {
                         // really gone?
-                        self.webSQLStorage.get(TMP_KEY, function(err, data) {
+                        self.adapter.get(TMP_KEY, function(err, data) {
+                            if(!err) {
+                                console.error('DAAAAAAAAAAAAAAAAMN data found: ', data, adapterID);
+                            }
+
                             expect(!!err).to.equal(true); // nothing found!
                             expect(typeof data).to.equal('undefined');
                             done();
                         });
-                    });
-                });
-
-                it('should store even more data', function(done) {
-                    var start = window.__now();
-                    var LEN = 1; // TODO figure out how to store more!
-                    var self = this;
-
-                    function it() {
-                        self.webSQLStorage.save(TMP_KEY + '_' + LEN, LARGE_OBJECT,
-                            function __saved(err) {
-                                expect(!!err).to.equal(false);
-
-                                var t = (window.__now() - start) / 1000;
-                                log('Isolation WebSQLStorage: stored ~' +
-                                    window.round(LARGE_LEN/factor/factor, 3) + 'MB in ~' + t + 's');
-
-                                if(--LEN === 0) {
-                                    done();
-                                }
-                                else  {
-                                    it();
-                                }
-                            }
-                        );
-                    }
-                    it();
+                    }, 250);
                 });
             });
-        }
-        function runSuiteForIDBStorage() {
-            describe('Isolation :: IDBStorage', function () {
-                before(function(done) {
-                    this.idbStorage = new IDBStorage();
-                    this.idbStorage.init(done);
-                });
-                it('should be initialized', function() {
-                    expect(typeof this.idbStorage).to.equal('object');
-                });
-                it('should store data', function(done) {
-                    var testData = ['hallo welt', {foo: 'bar'}];
-                    this.idbStorage.save(TMP_KEY, testData, function(err, data) {
-                        expect(!!err).to.equal(false);
-                        expect(data[0]).to.equal('hallo welt');
-                        done();
-                    });
-                });
-                it('should read the stored data', function(done) {
-                    this.idbStorage.get(TMP_KEY, function(err, data) {
-                        expect(!!err).to.equal(false);
-                        expect(data[0]).to.equal('hallo welt');
-                        expect(data[1].foo).to.equal('bar');
-                        done();
-                    });
-                });
-                it('should delete the stored data', function(done) {
-                    var self = this;
-                    this.idbStorage.delete(TMP_KEY, function(err) {
-                        expect(!!err).to.equal(false);
 
-                        // wait a little bit... (XXX better way?)
-                        setTimeout(function() {
-                            // really gone?
-                            self.idbStorage.get(TMP_KEY, function(err, data) {
-                                // sometimes there is data, means it didnt get
-                                // deleted in that short time...?
-                                if(!err) {
-                                    log('IDB TESTS - WTF!??!', data);
-                                }
+            it('should store even more data', function(done) {
+                var start = window.__now();
+                var LEN = 1; // TODO figure out how to store more!
+                var self = this;
 
-                                expect(!!err).to.equal(true); // nothing found!
-                                expect(typeof data).to.equal('undefined');
-                                done();
-                            });
-                        }, 900);
-                    });
-                });
-
-                it('should store some more data', function(done) {
-                    this.idbStorage.save(TMP_KEY, [[{foo: '12e', aString: BIG_STRING}]],
-                        function __saved(err, data) {
-                            expect(!!err).to.equal(false);
-                            expect(data[0][0].foo).to.equal('12e');
-                            done();
-                        }
-                    );
-                });
-
-                it('should store even more data', function(done) {
-                    var start = window.__now();
-                    this.idbStorage.save(TMP_KEY, LARGE_OBJECT,
+                function it() {
+                    self.adapter.save(TMP_KEY + '_' + LEN, LARGE_OBJECT,
                         function __saved(err) {
                             expect(!!err).to.equal(false);
 
                             var t = (window.__now() - start) / 1000;
-                            log('Isolation IDBStorage: stored ~' +
+                            log('Isolation ' + adapterID + ': stored ~' +
                                 window.round(LARGE_LEN/factor/factor, 3) + 'MB in ~' + t + 's');
 
-                            done();
+                            if(--LEN === 0) {
+                                done();
+                            }
+                            else  {
+                                it();
+                            }
                         }
                     );
+                }
+                it();
+            });
+
+            // just call the done-callback
+            it('should cleanup and finish', function(finish) {
+                this.adapter.nuke(function() {
+                    callback();
+                    finish();
                 });
             });
-        }
-        // ------------------------------------------
+        });
+    }
 
-        var wsql = new WebSQLStorage();
-        if(wsql.isValid()) {
-            runSuiteForWebSQLStorage();
-        }
-        var idb = new IDBStorage();
-        if(idb.isValid()) {
-            runSuiteForIDBStorage();
-        }
+    // *** isolation tests of different adapter backends standalone ***
+    runSuiteForAdapterInIsolation('indexeddb-storage', function() {
+        runSuiteForAdapterInIsolation('websql-storage', function() {
+            log('OK. Isolation tests done');
+            doStep2();
+        });
+    });
 
+    // ----- STEP #2 -----
+    // we need to wait for the isolation tests to be executed
+    function doStep2() {
 
         // ----------- run for both adapters: idb and websql
-        function runSuiteForCurrentAdapter(adapterID) {
+        function runSuiteForCurrentAdapter(adapterID, callback) {
+
+            // do not run the tests if adapter is not valid in current browser
+            if(!VanillaStorage.isValid(adapterID) && adapterID !== 'local-storage-dummy') {
+                return callback('Not valid: ' + adapterID);
+            }
 
             describe('Abstraction: VanillaStorage Frontent implementing IDB or WebSQL under the hood', function() {
 
                 before(function(done) {
                     this.isIndexedDBAdapter = /indexeddb/.test(adapterID);
-
-                    this.KEY = 'tmp';
 
                     var storageOptions = {
                         adapterID: adapterID
@@ -243,45 +214,42 @@ define(function(require) {
 
                     this.vanilla = new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
                         if(err) {
-                            log('ERROR STORAGE: ' + err);
-                            return done();
-                            // throw err;
+                            return log('ERROR STORAGE: ' + err);
                         }
 
                         // self.vanilla = this;
-                        done();
+                        // done();
+
+                        // cleanup before running tests
+                        this.nuke(done);
                     });
                 });
 
                 describe('Basic CRUD (adapter: ' + adapterID + ')', function() {
 
                     it('should store data', function(done) {
-                        /*if(!this.vanilla) {
-                            return done();
-                        }*/
-                        this.vanilla.save(this.KEY, DEMO_DATA, function(err, data) {
+                        this.vanilla.save(TMP_KEY, DEMO_DATA, function(err, data) {
                             expect(err).to.equal(null);
                             expect(data.foo).to.equal(DEMO_DATA.foo);
                             done();
                         });
                     });
 
-                    it('should store lots of "rows"m for testing performance', function(done) {
-                        if(!this.vanilla) {
-                            return done();
-                        }
-                        var len = 200; // bei 100 websql in chrome bereits 4 secs !
+                    it('should store lots of "rows" for testing performance', function(done) {
+                        var len = 500; // bei 100 websql in chrome bereits 4 secs !
                         var lenO = len;
                         var start;
                         var self = this;
 
                         function iter() {
-                            self.vanilla.save(self.KEY, DEMO_DATA, function(err) {
+                            var key = TMP_KEY+'_'+len;
+
+                            self.vanilla.save(key, DEMO_DATA, function(err) {
                                 expect(err).to.equal(null);
 
                                 if(--len === 0) {
                                     var t = (window.__now() - start) / 1000;
-                                    log('time storing ' + lenO + ' rows: ~' + window.round(t, 3) + 's');
+                                    log(adapterID + ': time storing ' + lenO + ' rows: ~' + window.round(t, 3) + 's');
                                     done();
                                 }
                                 else {
@@ -295,10 +263,7 @@ define(function(require) {
                     });
 
                     it('should read data', function(done) {
-                        if(!this.vanilla) {
-                            return done();
-                        }
-                        this.vanilla.get(this.KEY, function(err, data) {
+                        this.vanilla.get(TMP_KEY, function(err, data) {
                             expect(err).to.equal(null);
                             expect(data.foo).to.equal(DEMO_DATA.foo);
                             done();
@@ -306,18 +271,16 @@ define(function(require) {
                     });
 
                     it('should delete data', function(done) {
-                        if(!this.vanilla) {
-                            return done();
-                        }
                         var self = this;
-                        this.vanilla.delete(this.KEY, function(err) {
+                        this.vanilla.delete(TMP_KEY, function(err) {
                             if(err) {
+                                log('ERROR', err);
                                 return console.error(err);
                             }
                             expect(err).to.equal(null);
 
                             // really gone?
-                            self.vanilla.get(self.KEY, function(err) {
+                            self.vanilla.get(TMP_KEY, function(err) {
                                 // NO DATA FOUND
                                 expect(typeof err).to.not.equal('undefined');
                                 done();
@@ -326,9 +289,6 @@ define(function(require) {
                     });
 
                     it('should nuke all data', function(done) {
-                        if(!this.vanilla) {
-                            return done();
-                        }
                         this.vanilla.nuke(function(err) {
                             expect(err).to.equal(null);
                             done();
@@ -336,28 +296,43 @@ define(function(require) {
                     });
 
                     it('should overwrite data', function(done) {
-                        if(!this.vanilla) {
-                            return done();
-                        }
-                        var dataToStore = {foo: 'bar'};
+                        var dataToStore = {num: 42};
                         var self = this;
-                        this.vanilla.save(this.KEY, dataToStore, function(err) {
+                        this.vanilla.save(TMP_KEY, dataToStore, function(err) {
                             expect(err).to.equal(null);
-                            self.vanilla.get(self.KEY, function(err, data) {
-                                expect(data.foo).to.equal('bar');
 
-                                // edit data and overwrite...
-                                dataToStore.foo = 'bar1';
+                            // this sometimes needs some time on IDB...
+                            setTimeout(function() {
+                                self.vanilla.get(TMP_KEY, function(err, data) {
+                                    if(!data || !data.num) {
+                                        console.error('SOMETHING IS WRONG HERE: adapterID: ' +
+                                                adapterID, data, err);
+                                    }
+                                    expect(data.num).to.equal(42);
 
-                                // again, same key but new data
-                                self.vanilla.save(self.KEY, dataToStore, function(err) {
-                                    expect(err).to.equal(null);
-                                    self.vanilla.get(self.KEY, function(err, data) {
-                                        expect(data.foo).to.equal(dataToStore.foo);
-                                        done();
+                                    // edit data directly and overwrite...
+                                    data.foo = 'bar1';
+                                    data.o = {};
+
+                                    // again, same key but new data
+                                    self.vanilla.save(TMP_KEY, data, function(err) {
+                                        expect(err).to.equal(null);
+
+                                        // this sometimes needs some time on IDB...
+                                        setTimeout(function() {
+                                            self.vanilla.get(TMP_KEY, function(err, dataOut) {
+                                                if(err) {
+                                                    log(err, 'error');
+                                                }
+                                                expect(dataOut.num).to.equal(42);
+                                                expect(dataOut.foo).to.equal('bar1');
+                                                expect(typeof dataOut.o).to.equal('object');
+                                                done();
+                                            });
+                                        }, 250);
                                     });
                                 });
-                            });
+                            }, 250);
                         });
                     });
                 });
@@ -365,13 +340,12 @@ define(function(require) {
                 describe('Advanced CRUD (adapter: ' + adapterID + ')', function() {
                     it('should save lots of data at once', function(done) {
                         if(!this.vanilla) {
-                            log('STORAGE-TESTS: No storage instance for adapterID=' + adapterID + ' ???');
-                            return done();
+                            return log('STORAGE-TESTS: No storage instance for adapterID=' + adapterID + ' ???');
                         }
 
                         var start = window.__now();
 
-                        this.vanilla.save(this.KEY, {aString: BIG_STRING}, function(err, data) {
+                        this.vanilla.save(TMP_KEY, {aString: BIG_STRING}, function(err, data) {
                             expect(err).to.equal(null);
                             expect(BIG_STRING).to.equal(data.aString);
 
@@ -384,13 +358,9 @@ define(function(require) {
                         });
                     });
                     it('should read lots of data at once', function(done) {
-                        if(!this.vanilla) {
-                            return done();
-                        }
-
                         var start = window.__now();
 
-                        this.vanilla.get(this.KEY, function(err, data) {
+                        this.vanilla.get(TMP_KEY, function(err, data) {
                             expect(typeof data.aString).to.not.equal('undefined');
 
                             // show some stats
@@ -406,7 +376,7 @@ define(function(require) {
                 describe('Error Handling (adapter: ' + adapterID + ')', function() {
                     it('should not save corrupted data', function(done) {
                         var data = {fn: function(a) {return a+2;}};
-                        this.vanilla.save(this.KEY, data, function(err) {
+                        this.vanilla.save(TMP_KEY, data, function(err) {
                             expect(typeof err).to.equal('object');
                             done();
                         });
@@ -417,7 +387,7 @@ define(function(require) {
                     it('should not save numbers only on indexed db', function(done) {
                         var data = 42;
                         var self = this;
-                        this.vanilla.save(this.KEY, data, function(err) {
+                        this.vanilla.save(TMP_KEY, data, function(err) {
                             if(self.isIndexedDBAdapter) {
                                 expect(typeof err).to.equal('object');
                             }
@@ -430,7 +400,7 @@ define(function(require) {
                     it('should not save bools only on indexed db', function(done) {
                         var data = false;
                         var self = this;
-                        this.vanilla.save(this.KEY, data, function(err) {
+                        this.vanilla.save(TMP_KEY, data, function(err) {
                             if(self.isIndexedDBAdapter) {
                                 expect(typeof err).to.equal('object');
                             }
@@ -443,7 +413,7 @@ define(function(require) {
                     it('should not save strings only on indexed db', function(done) {
                         var data = 'Hello world';
                         var self = this;
-                        this.vanilla.save(this.KEY, data, function(err) {
+                        this.vanilla.save(TMP_KEY, data, function(err) {
                             if(self.isIndexedDBAdapter) {
                                 expect(typeof err).to.equal('object');
                             }
@@ -456,38 +426,59 @@ define(function(require) {
                     // ---------------------------------------------------------
 
                     it('should automatically parse keys', function(done) {
-                        var self    = this;
                         var vanilla = this.vanilla;
-                        var data    = {foo: 'bar'};
-                        var key     = '/:' + this.KEY + '/';
+                        var dataIn  = {foo: 'bar111'};
+                        var key     = '/:' + TMP_KEY + '/';
 
-                        vanilla.save(key, data, function(err) {
+                        vanilla.save(key, dataIn, function(err, data) {
                             expect(err).to.equal(null);
+                            expect(data.foo).to.equal(dataIn.foo);
 
-                            vanilla.get(self.KEY, function(err, data) {
-                                expect(data).to.equal(data);
-                                done();
-                            });
+                            // this sometimes needs some time on IDB...
+                            setTimeout(function() {
+                                vanilla.get(TMP_KEY, function(err, data) {
+                                    if(!data || !data.foo) {
+                                        console.error('SOMETHING IS WRONG HERE: adapterID: ' +
+                                            adapterID, data, err);
+                                    }
+
+                                    expect(dataIn.foo).to.equal(data.foo);
+                                    done();
+                                });
+                            }, 250);
                         });
+                    });
+                });
+
+                describe('Cleaning up...', function() {
+                    it('should nuke and finish', function() {
+                        // just call the done callback now...
+                        callback();
                     });
                 });
             });
         }
 
-        // *** tests for different adapters ***
+        // *** tests for frontend forcing different adapter backends ***
+        // only run the tests if the adapter is supported in the current env
         var adapterID;
 
-        adapterID = 'websql-storage';
-        if(VanillaStorage.isValid(adapterID)) {
-            runSuiteForCurrentAdapter(adapterID);
-        }
         adapterID = 'indexeddb-storage';
-        if(VanillaStorage.isValid(adapterID)) {
-            runSuiteForCurrentAdapter(adapterID);
-        }
+        runSuiteForCurrentAdapter(adapterID, function() {
+            log('OK. IndexedDB suite done.');
 
-        // unknown adapter-id -> will fallback to localStorage (-;
-        adapterID = 'local-storage-dummy';
-        runSuiteForCurrentAdapter(adapterID);
-    });
+            // next:
+            adapterID = 'websql-storage';
+            runSuiteForCurrentAdapter(adapterID, function() {
+                log('OK. WebSQL suite done.');
+
+                // next:
+                // unknown adapter-id -> will fallback to localStorage (-;
+                adapterID = 'local-storage-dummy';
+                runSuiteForCurrentAdapter(adapterID, function() {
+                    log('OK. LocalStorage suite done.');
+                });
+            });
+        });
+    }
 });
