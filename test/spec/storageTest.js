@@ -334,6 +334,32 @@ define(function(require) {
                             done();
                         });
                     });
+
+                    it('should overwrite data', function(done) {
+                        if(!this.vanilla) {
+                            return done();
+                        }
+                        var dataToStore = {foo: 'bar'};
+                        var self = this;
+                        this.vanilla.save(this.KEY, dataToStore, function(err) {
+                            expect(err).to.equal(null);
+                            self.vanilla.get(self.KEY, function(err, data) {
+                                expect(data.foo).to.equal('bar');
+
+                                // edit data and overwrite...
+                                dataToStore.foo = 'bar1';
+
+                                // again, same key but new data
+                                self.vanilla.save(self.KEY, dataToStore, function(err) {
+                                    expect(err).to.equal(null);
+                                    self.vanilla.get(self.KEY, function(err, data) {
+                                        expect(data.foo).to.equal(dataToStore.foo);
+                                        done();
+                                    });
+                                });
+                            });
+                        });
+                    });
                 });
 
                 describe('Advanced CRUD (adapter: ' + adapterID + ')', function() {

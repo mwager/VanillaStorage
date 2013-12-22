@@ -55,9 +55,8 @@
                 // NOTE: We can only create Object stores in a
                 // "version change transaction".
                 request.onupgradeneeded = function(e) {
-                    // out('---indexed-db--- on upgradeneeded', self.KEYS);
+                    // out('---indexed-db--- on upgradeneeded');
                     var db = e.target.result;
-                    // var i;
 
                     if(db.objectStoreNames.contains(storeName)) {
                         db.deleteObjectStore(storeName);
@@ -70,34 +69,16 @@
                     // store.createIndex(key, key, {unique:true});
 
                     out('---indexed-db--- created store: ' + storeName, store);
-
-                    /*
-                    for(i in self.KEYS) {
-                        var key = parseKey(self.KEYS[i]);
-
-                        // delete already existing stores with same name
-                        if(db.objectStoreNames.contains(key)) {
-                            db.deleteObjectStore(key);
-                        }
-
-                        var store = db.createObjectStore(key, {
-                            keyPath: key,
-                            autoIncrement: false
-                        });
-                        // store.createIndex(key, key, {unique:true});
-
-                        out('---indexed-db--- created store: ' + key, store);
-                    }*/
                 };
 
                 request.onsuccess = function(e) {
-                    // log('---indexed-db--- on success');
+                    // out('---indexed-db--- on success', e.target.result);
                     self.db = e.target.result;
                     callback(null);
                 };
 
                 request.onerror = function(e) {
-                    // log('---indexed-db--- ERROR' + e.target.error, e, e.target.error);
+                    // out('---indexed-db--- ERROR' + e.target.error, e, e.target.error);
                     callback(e.target.error); // e.value?
                 };
             },
@@ -130,33 +111,6 @@
                     request.onerror = function(e) {
                         callback(e);
                     };
-
-                    /*
-                    // Get everything in the store;
-                    NO. we just want by id. see above.
-                    var keyRange      = IDBKeyRange.lowerBound(0);
-                    var cursorRequest = store.openCursor(keyRange);
-
-                    cursorRequest.onsuccess = function(e) {
-                        var result = e.target.result;
-
-                        var res = !!result; // convert to bool
-                        var nothingFound = (res === false);
-
-                        if(nothingFound) {
-                            // nothing found
-                            return callback(new FSCError('nothing found'));
-                        }
-
-                        return callback(null, result.value);
-
-                        // not needed here?
-                        // result.continue();
-                    };
-                    cursorRequest.onerror = function(e) {
-                        callback(e);
-                    };
-                    */
                 }
                 catch(e) {
                     return callback(e);
@@ -173,12 +127,6 @@
                 try {
                     trans = this.db.transaction([storeName], 'readwrite');
                     store = trans.objectStore(storeName);
-
-                    // key path in example:
-                    // data.timestamp = new Date().getTime();
-
-                    // we use the key as key (-;
-                    // data[key] = key;
 
                     try {
                         // create/update the data
