@@ -59,7 +59,7 @@
                 // NOTE: We can only create Object stores in a
                 // "version change transaction".
                 request.onupgradeneeded = function(e) {
-                    // log('---indexed-db--- on upgradeneeded', self.KEYS);
+                    // out('---indexed-db--- on upgradeneeded', self.KEYS);
                     var db = e.target.result;
                     var i;
 
@@ -77,7 +77,7 @@
                         });
                         // store.createIndex(key, key, {unique:true});
 
-                        log('---indexed-db--- created store: ' + key, store);
+                        out('---indexed-db--- created store: ' + key, store);
                     }
                 };
 
@@ -217,7 +217,7 @@
                         };
                     }
                     catch(e) {
-                        log('IDB Error delete: ', e, ' key ', key);
+                        out('IDB Error delete: ', e, ' key ', key);
                         return callback(e);
                     }
                 }
@@ -243,7 +243,7 @@
                         });
                     }
                     catch(e) {
-                        log('IDB ERROR', e);
+                        out('IDB ERROR', e);
                         if(--len === 0) {
                             return callback(e);
                         }
