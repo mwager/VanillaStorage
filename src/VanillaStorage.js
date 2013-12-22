@@ -73,11 +73,6 @@
                 // throw new Error(errMsg);
             }
 
-            // Indexed DB needs the keys on creation
-            if(typeof this.adapter.setKeys === 'function' && options && options.keys) {
-                this.adapter.setKeys(options.keys);
-            }
-
             // need to init the used adapter async
             this.adapter.init(function(err) {
                 if(err) {
