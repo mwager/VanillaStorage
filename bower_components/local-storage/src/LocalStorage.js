@@ -10,8 +10,11 @@
 (function() {
     'use strict';
 
-    // TODO slugify?
+    // slugify helper
     function parseKey(key) {
+        key = key.replace(/\//g, '');
+        key = key.replace(/[:]/g, '');
+        key = key.replace(/[.]/g, '');
         return 'ls_' + key;
     }
 

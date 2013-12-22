@@ -8,13 +8,8 @@ Simple `window.localStorage` abstraction wrapper
 
 ### Via bower  ###
 
-Add this to your `bower.json`:
-
-    "LocalStorage": "https://raw.github.com/mwager/LocalStorage/master/src/LocalStorage.js"
-
-Then execute:
-
-    $ bower install
+    $ bower info local-storage
+    $ bower install local-storage
 
 ### From source  ###
 
