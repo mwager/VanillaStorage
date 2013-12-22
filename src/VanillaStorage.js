@@ -191,6 +191,7 @@
     // ...or simply to the global namespace
     else {
         window.VanillaStorage = factory(
+            window.LocalStorage,
             window.WebSQLStorage,
             window.IDBStorage,
             window.storageHelpers
