@@ -25,22 +25,16 @@
                 return false;
             }
 
-            this.DATABASE_NAME    = 'vanilla_idb';
-            this.DATABASE_VERSION = 1.0;
+            this.DATABASE_NAME     = 'vanilla_idb';
+            this.DATABASE_VERSION  = 1.0;
+            this.OBJECT_STORE_NAME = 'vanilla_idb_store';
 
             this.db = null; // filled in init()
-
-            this.KEYS = [];
         };
 
         IDBStorage.prototype = {
             isValid: function() {
                 return !!indexedDB && 'indexedDB' in window;
-            },
-
-            // we need to pass the keyPaths for the object stores
-            setKeys: function(keys) {
-                this.KEYS = keys;
             },
 
             /**
@@ -49,9 +43,11 @@
              */
             init: function(callback) {
                 callback = ensureCallback(callback);
-                var self = this;
 
-                var request = window.indexedDB.open(
+                var self      = this;
+                var storeName = this.OBJECT_STORE_NAME;
+
+                var request = indexedDB.open(
                     this.DATABASE_NAME,
                     this.DATABASE_VERSION
                 );
@@ -61,8 +57,21 @@
                 request.onupgradeneeded = function(e) {
                     // out('---indexed-db--- on upgradeneeded', self.KEYS);
                     var db = e.target.result;
-                    var i;
+                    // var i;
 
+                    if(db.objectStoreNames.contains(storeName)) {
+                        db.deleteObjectStore(storeName);
+                    }
+
+                    var store = db.createObjectStore(storeName, {
+                        keyPath: 'id',
+                        autoIncrement: false
+                    });
+                    // store.createIndex(key, key, {unique:true});
+
+                    out('---indexed-db--- created store: ' + storeName, store);
+
+                    /*
                     for(i in self.KEYS) {
                         var key = parseKey(self.KEYS[i]);
 
@@ -78,7 +87,7 @@
                         // store.createIndex(key, key, {unique:true});
 
                         out('---indexed-db--- created store: ' + key, store);
-                    }
+                    }*/
                 };
 
                 request.onsuccess = function(e) {
@@ -97,11 +106,11 @@
                 callback = ensureCallback(callback);
                 key      = parseKey(key);
 
-                var trans, store;
+                var trans, store, storeName = this.OBJECT_STORE_NAME;
 
                 try {
-                    trans = this.db.transaction([key], 'readonly');
-                    store = trans.objectStore(key);
+                    trans = this.db.transaction([storeName], 'readonly');
+                    store = trans.objectStore(storeName);
 
                     var request = store.get(key);
 
@@ -116,7 +125,7 @@
                             return callback('No data found for key: ' + key);
                         }
 
-                        return callback(null, result);
+                        return callback(null, result.data);
                     };
                     request.onerror = function(e) {
                         callback(e);
@@ -158,25 +167,24 @@
                 callback = ensureCallback(callback);
                 key      = parseKey(key);
 
-                var trans, store, request;
+                var trans, store, request, storeName = this.OBJECT_STORE_NAME;
 
                 // delete all existing data first
-                //this.delete(key, function __deleted() {
                 try {
-                    trans = this.db.transaction([key], 'readwrite');
-                    store = trans.objectStore(key);
+                    trans = this.db.transaction([storeName], 'readwrite');
+                    store = trans.objectStore(storeName);
 
                     // key path in example:
                     // data.timestamp = new Date().getTime();
 
                     // we use the key as key (-;
-                    data[key] = key;
+                    // data[key] = key;
 
                     try {
                         // create/update the data
-                        request = store.put(data);
+                        request = store.put({id: key, data: data});
 
-                        request.onsuccess = function(/*e*/) {
+                        request.onsuccess = function() {
                             callback(null, data);
                         };
 
@@ -185,7 +193,7 @@
                         };
                     }
                     catch(e) {
-                        out(key, 'IDB Error put: ', e, ' data: ', data);
+                        out('IDB Error save at key=' + key, e, ' data: ', data, 'KEY: ' + key);
                         return callback(e);
                     }
                 }
@@ -193,7 +201,6 @@
                     out(key, e);
                     return callback(e);
                 }
-                //});
             },
 
 
@@ -201,9 +208,11 @@
                 callback = ensureCallback(callback);
                 key      = parseKey(key);
 
+                var storeName = this.OBJECT_STORE_NAME;
+
                 try {
-                    var trans = this.db.transaction([key], 'readwrite');
-                    var store = trans.objectStore(key);
+                    var trans = this.db.transaction([storeName], 'readwrite');
+                    var store = trans.objectStore(storeName);
 
                     try {
                         var request = store.delete(key);
@@ -226,32 +235,31 @@
                 }
             },
 
+            /**
+             * Clear the whole store
+             */
             nuke: function(callback) {
                 callback = ensureCallback(callback);
 
-                var self = this;
-                var len  = this.KEYS.length;
+                var storeName = this.OBJECT_STORE_NAME;
 
-                function iterate(i) {
-                    try {
-                        self.delete(self.KEYS[i], function() {
-                            if(--len === 0) {
-                                return callback(null);
-                            }
+                try {
+                    var trans = this.db.transaction([storeName], 'readwrite');
+                    var store = trans.objectStore(storeName);
 
-                            iterate(i++);
-                        });
-                    }
-                    catch(e) {
-                        out('IDB ERROR', e);
-                        if(--len === 0) {
-                            return callback(e);
-                        }
-                        iterate(i++);
-                    }
+                    var clearRequest = store.clear();
+
+                    clearRequest.onsuccess = function() {
+                        callback(null);
+                    };
+                    clearRequest.onerror = function(e) {
+                        callback(e);
+                    };
                 }
-
-                iterate(0);
+                catch(e) {
+                    out('IDB Error nuke: ', e);
+                    return callback(e);
+                }
             }
         };
 

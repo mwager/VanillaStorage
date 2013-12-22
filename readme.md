@@ -81,9 +81,9 @@ Callback functions always have the error as first parameter, data as second if a
 
 ```javascript
 // we need to set the name(s) of object store(s) before we init IndexedDB
-var objectStoreNames = ['store1', 'store2'],
+var options = {},
     vanilla,
-    KEY       = objectStoreNames[0],
+    KEY       = 'some-key',
     DEMO_DATA = {foo: 'bar', num:42};
 
 // vanilla api ready to use
@@ -109,9 +109,7 @@ console.log(VanillaStorage.isValid('websql-storage'))
 console.log(VanillaStorage.isValid('indexeddb-storage'))
 
 // NOTE: you must provide a `ready`-calback
-vanilla = new VanillaStorage({
-    keys: objectStoreNames
-}, readyToUseAPI);
+vanilla = new VanillaStorage(options, readyToUseAPI);
 ```
 
 ### Standalone usage  ###
@@ -131,7 +129,6 @@ wsql.init(function ready(err) {
 });
 
 var idb = new IDBStorage();
-idb.setKeys(keys);
 if(idb.isValid()) {
     idb.init(function ready(err) {
         if(!err) {
@@ -159,9 +156,7 @@ Run the suite in real browsers via `testem`:
 
 
 ## TODOs ##
-* localStorage as second fallback ?
 * search the repo for `TODO`...
-* IDB: *one* object-store with many keys?!
 * figure out way to store more data using phantomjs. increase in storageTest, see TODO. or only on browsers? testem etc...
 
     $ grunt test-server &

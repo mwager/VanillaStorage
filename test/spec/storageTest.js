@@ -145,7 +145,6 @@ define(function(require) {
             describe('Isolation :: IDBStorage', function () {
                 before(function(done) {
                     this.idbStorage = new IDBStorage();
-                    this.idbStorage.setKeys(['tmp']);
                     this.idbStorage.init(done);
                 });
                 it('should be initialized', function() {
@@ -236,18 +235,10 @@ define(function(require) {
                 before(function(done) {
                     this.isIndexedDBAdapter = /indexeddb/.test(adapterID);
 
-                    this.keys = [
-                        'tmp',
-                        'anotherkey'
-                    ];
+                    this.KEY = 'tmp';
 
-                    this.KEY = this.keys[0];
-
-                    // for indexed db, we must pass the keys
-                    // try force the adapter, but this cannot work in all browsers...
                     var storageOptions = {
-                        adapterID: adapterID,
-                        keys:      this.keys
+                        adapterID: adapterID
                     };
 
                     this.vanilla = new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
