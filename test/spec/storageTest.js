@@ -40,8 +40,8 @@ define(function(require) {
 
     // TODO better? more tests, more data.
     // If phantomjs makes trouble, do it only in REAL browsers!
-    // var ua          = navigator.userAgent.toLowerCase();
-    // var isPhantomjs = (/phantomjs/).test(ua);
+    var ua          = navigator.userAgent.toLowerCase();
+    var isPhantomjs = (/phantomjs/).test(ua);
 
     (function __generateDemoData() {
         var letters = 'abcdefghijklmnopqrstuvwxyz';
@@ -57,8 +57,10 @@ define(function(require) {
 
         BIG_STRING = BIG_STRING.join('');
 
-        // TODO increase 2 to 10 or more...
-        for(i = 0; i < 2; i ++) {
+        // use 10 MB on real browsers, 2MB on PhantomJS
+        var MAX = isPhantomjs ? 2 : 10;
+
+        for(i = 0; i < MAX; i ++) {
             var t = {};
             for(var j = 0; j < 10; j ++) {
                 t.largeString = BIG_STRING;
@@ -156,7 +158,7 @@ define(function(require) {
                             expect(!!err).to.equal(false);
 
                             var t = (window.__now() - start) / 1000;
-                            log('Isolation WebSQLStorage: stored ~' +
+                            log('Isolation ' + adapterID + ': stored ~' +
                                 window.round(LARGE_LEN/factor/factor, 3) + 'MB in ~' + t + 's');
 
                             if(--LEN === 0) {
