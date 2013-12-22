@@ -233,19 +233,21 @@ define(function(require) {
                         });
                     });
 
-                    it('should store lots of "rows"m for testing performance', function(done) {
-                        var len = 200; // bei 100 websql in chrome bereits 4 secs !
+                    it('should store lots of "rows" for testing performance', function(done) {
+                        var len = 500; // bei 100 websql in chrome bereits 4 secs !
                         var lenO = len;
                         var start;
                         var self = this;
 
                         function iter() {
-                            self.vanilla.save(TMP_KEY, DEMO_DATA, function(err) {
+                            var key = TMP_KEY+'_'+len;
+
+                            self.vanilla.save(key, DEMO_DATA, function(err) {
                                 expect(err).to.equal(null);
 
                                 if(--len === 0) {
                                     var t = (window.__now() - start) / 1000;
-                                    log('time storing ' + lenO + ' rows: ~' + window.round(t, 3) + 's');
+                                    log(adapterID + ': time storing ' + lenO + ' rows: ~' + window.round(t, 3) + 's');
                                     done();
                                 }
                                 else {
