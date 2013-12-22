@@ -80,7 +80,6 @@ Callback functions always have the error as first parameter, data as second if a
 #### Default usage ####
 
 ```javascript
-// we need to set the name(s) of object store(s) before we init IndexedDB
 var options = {},
     vanilla,
     KEY       = 'some-key',
