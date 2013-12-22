@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "requirejs": "~2.1.5",
-    "local-storage": "~1.0.0"
+    "local-storage": "~1.0.1"
   },
   "devDependencies": {
     "mocha": "~1.15.1",
