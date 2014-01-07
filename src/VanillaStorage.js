@@ -94,13 +94,15 @@
                 callback = ensureCallback(callback);
 
                 if(this.localStorageFallback) {
+                    var data;
                     try {
-                        var data = this.adapter.get(key);
-                        callback(null, data);
+                        data = this.adapter.get(key);
                     }
                     catch(e) {
-                        callback(e);
+                        return callback(e);
                     }
+
+                    callback(null, data);
                 }
                 else {
                     this.adapter.get(key, callback);
@@ -113,11 +115,12 @@
                 if(this.localStorageFallback) {
                     try {
                         this.adapter.save(key, data);
-                        callback(null, data);
                     }
                     catch(e) {
-                        callback(e);
+                        return callback(e);
                     }
+
+                    callback(null, data);
                 }
                 else {
                     this.adapter.save(key, data, callback);
@@ -130,11 +133,12 @@
                 if(this.localStorageFallback) {
                     try {
                         this.adapter.delete(key);
-                        callback(null);
                     }
                     catch(e) {
-                        callback(e);
+                        return callback(e);
                     }
+
+                    callback(null);
                 }
                 else {
                     this.adapter.delete(key, callback);
@@ -147,11 +151,12 @@
                 if(this.localStorageFallback) {
                     try {
                         this.adapter.nuke();
-                        callback(null);
                     }
                     catch(e) {
-                        callback(e);
+                        return callback(e);
                     }
+
+                    callback(null);
                 }
                 else {
                     this.adapter.nuke(callback);

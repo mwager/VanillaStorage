@@ -373,7 +373,7 @@ define(function(require) {
                     });
                 });
 
-                describe('Error Handling (adapter: ' + adapterID + ')', function() {
+                describe('Error/Exception Handling (adapter: ' + adapterID + ')', function() {
                     it('should not save corrupted data', function(done) {
                         var data = {fn: function(a) {return a+2;}};
                         this.vanilla.save(TMP_KEY, data, function(err) {
