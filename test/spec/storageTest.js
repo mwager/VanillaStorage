@@ -173,6 +173,31 @@ define(function(require) {
                 it();
             });
 
+            it('should handle utf8 data', function(done) {
+                var self = this;
+                var ORIGINAL_UTF8_STR = 'Säft mÖchän liedööör not for €';
+                var utf8String = ORIGINAL_UTF8_STR;
+
+                // @see http://ecmanaut.blogspot.de/2006/07/encoding-decoding-utf8-in-javascript.html
+                function encode_utf8(s) {
+                    return window.unescape(encodeURIComponent(s));
+                }
+                function decode_utf8(s) {
+                    return decodeURIComponent(window.escape(s));
+                }
+                utf8String = encode_utf8(utf8String);
+                utf8String = decode_utf8(utf8String);
+                expect(utf8String).to.equal(ORIGINAL_UTF8_STR);
+
+                this.adapter.save(TMP_KEY, {str: utf8String}, function() {
+                    self.adapter.get(TMP_KEY, function(err, data) {
+                        expect(utf8String).to.equal(data.str);
+                        // log(data.str)
+                        done();
+                    });
+                });
+            });
+
             // just call the done-callback
             it('should cleanup and finish', function(finish) {
                 this.adapter.nuke(function() {
