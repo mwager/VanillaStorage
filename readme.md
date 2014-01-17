@@ -86,17 +86,16 @@ var options = {},
     DEMO_DATA = {foo: 'bar', num:42};
 
 // vanilla api ready to use
-// it uses IndexedDB or WebSQL under the hood
 var readyToUseAPI = function(err) {
     console.log(err, this); // -> this instanceof VanillaStorage
 
-    this.save(KEY, DEMO_DATA, function(err) {
+    this.save(KEY, DEMO_DATA, function _saved(err) {
         console.log(err); // should be undefined
 
-        vanilla.get(KEY, function(err, data) {
+        vanilla.get(KEY, function _fetched(err, data) {
             console.log(data); // -> DEMO_DATA
 
-            vanilla.delete(KEY, function(err) {
+            vanilla.delete(KEY, function _dropped(err) {
                 // calling get(KEY) now should have the error passed with message not found
             });
         });
