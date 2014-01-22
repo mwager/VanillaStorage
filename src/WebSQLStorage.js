@@ -116,18 +116,17 @@
                 callback = ensureCallback(callback);
                 key      = parseKey(key);
 
+                if(!this.db) {
+                    return callback('No db available');
+                }
+
                 var data;
 
                 try {
                     data = JSON.stringify(dataIn);
                 }
                 catch(e) {
-                    // TODO concept! throw own error here?
                     return callback('JSON Parse error: ' + dataIn);
-                }
-
-                if(!this.db) {
-                    return callback('No db available');
                 }
 
                 var ins     = 'INSERT OR REPLACE INTO ' + this.TABLE_NAME + ' (id, value, timestamp) VALUES (?,?,?)';
@@ -145,12 +144,12 @@
             },
 
             delete: function(key, callback) {
+                callback = ensureCallback(callback);
+                key      = parseKey(key);
+
                 if(!this.db) {
                     return callback('No db available');
                 }
-
-                callback = ensureCallback(callback);
-                key      = parseKey(key);
 
                 var sql = 'DELETE FROM ' + this.TABLE_NAME + ' WHERE id = ?';
                 this.db.transaction(function (t) {
@@ -165,6 +164,10 @@
 
             nuke: function(callback) {
                 callback = ensureCallback(callback);
+
+                if(!this.db) {
+                    return callback('No db available');
+                }
 
                 var sql = 'DELETE FROM ' + this.TABLE_NAME;
                 this.db.transaction(function (t) {

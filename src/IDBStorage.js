@@ -116,6 +116,10 @@
 
                 var trans, store, storeName = this.OBJECT_STORE_NAME;
 
+                if(!this.db) {
+                    return callback('IDBStprage.js this.db is undefined');
+                }
+
                 try {
                     trans = this.db.transaction([storeName], 'readonly');
                     store = trans.objectStore(storeName);
@@ -147,6 +151,10 @@
             save: function(key, data, callback) {
                 callback = ensureCallback(callback);
                 key      = parseKey(key);
+
+                if(!this.db) {
+                    return callback('IDBStprage.js this.db is undefined');
+                }
 
                 var trans, store, request, storeName = this.OBJECT_STORE_NAME;
 
@@ -183,6 +191,10 @@
                 callback = ensureCallback(callback);
                 key      = parseKey(key);
 
+                if(!this.db) {
+                    return callback('IDBStprage.js this.db is undefined');
+                }
+
                 var storeName = this.OBJECT_STORE_NAME;
 
                 try {
@@ -215,6 +227,10 @@
              */
             nuke: function(callback) {
                 callback = ensureCallback(callback);
+
+                if(!this.db) {
+                    return callback('IDBStprage.js this.db is undefined');
+                }
 
                 var storeName = this.OBJECT_STORE_NAME;
 
