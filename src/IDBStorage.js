@@ -46,40 +46,67 @@
 
                 var self      = this;
                 var storeName = this.OBJECT_STORE_NAME;
+                var request;
 
-                var request = indexedDB.open(
-                    this.DATABASE_NAME,
-                    this.DATABASE_VERSION
-                );
+                try {
+                    request = indexedDB.open(
+                        this.DATABASE_NAME,
+                        this.DATABASE_VERSION
+                    );
+                } catch(e) {
+                    return callback(e);
+                }
 
                 // NOTE: We can only create Object stores in a
                 // "version change transaction".
                 request.onupgradeneeded = function(e) {
+                    if(!e || !e.target ||!e.target.result) {
+                        return callback('IDBStorage.js - request.onupgradeneeded: ' +
+                            'no database instance in e.target.result');
+                    }
+
                     // out('---indexed-db--- on upgradeneeded');
                     var db = e.target.result;
 
-                    if(db.objectStoreNames.contains(storeName)) {
-                        db.deleteObjectStore(storeName);
+                    try {
+                        if(db.objectStoreNames.contains(storeName)) {
+                            db.deleteObjectStore(storeName);
+                        }
+
+                        var store = db.createObjectStore(storeName, {
+                            keyPath: 'id',
+                            autoIncrement: false
+                        });
+
+                        // store.createIndex(key, key, {unique:true});
+
+                        out('---indexed-db--- created store: ' + storeName, store);
+                    } catch(e) {
+                        callback(e);
                     }
-
-                    var store = db.createObjectStore(storeName, {
-                        keyPath: 'id',
-                        autoIncrement: false
-                    });
-                    // store.createIndex(key, key, {unique:true});
-
-                    out('---indexed-db--- created store: ' + storeName, store);
                 };
 
                 request.onsuccess = function(e) {
+                    if(!e || !e.target ||!e.target.result) {
+                        return callback('IDBStorage.js - request.onsuccess: no database instance in e.target.result');
+                    }
+
                     // out('---indexed-db--- on success', e.target.result);
                     self.db = e.target.result;
                     callback(null);
                 };
 
                 request.onerror = function(e) {
-                    // out('---indexed-db--- ERROR' + e.target.error, e, e.target.error);
-                    callback(e.target.error); // e.value?
+                    if(!e || !e.target ||!e.target.error) {
+                        return callback('IDBStorage.js - request.onupgradeneeded: no error info in e.target.error');
+                    }
+                    try {
+                        var err = (e && e.target && e.target.error) ? e.target.error : e;
+                        callback(err); // e.value?
+                    }
+                    catch(e) {
+                        callback(e);
+                    }
                 };
             },
 
