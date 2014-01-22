@@ -77,7 +77,7 @@
             // need to init the used adapter async
             this.adapter.init(function(err) {
                 if(err) {
-                    initCallback.call(self, err);
+                    return initCallback.call(self, err);
                 }
 
                 initCallback.call(self, null);
