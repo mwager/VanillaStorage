@@ -13,13 +13,20 @@
  *
  * @author  Michael Wager <mail@mwager.de>
  * @license http://opensource.org/licenses/MIT
- * @version 0.4.2
+ * @version 0.4.6
  */
 (function() {
     'use strict';
 
     function factory(LocalStorage, WebSQLStorage, IDBStorage, helpers) {
         var ensureCallback = helpers.ensureCallback;
+
+        // helper for logging errors
+        var errorOut = function() {
+            if(console && console.error) {
+                console.error.apply(console, arguments);
+            }
+        };
 
         // Order is relevant! first valid will be taken
         var adaptersWeSupport = {
@@ -33,9 +40,45 @@
         var VanillaStorage = function(options, initCallback) {
             var self = this;
 
-            initCallback = ensureCallback(initCallback);
-
             this.adapter = null;
+
+            // provide defaults
+            options           = options || {};
+            options.storeName = options.storeName || 'vanilla_store';
+            options.version   = options.version || '1.0';
+            initCallback      = ensureCallback(initCallback);
+
+            // overwrite. Order is relevant!
+            adaptersWeSupport = {
+                'indexeddb-storage': new IDBStorage(options.storeName, options.version),
+                'websql-storage'   : new WebSQLStorage(options.storeName, options.version)
+            };
+
+            // if idb and websql is not supported (eg ie<=9) or if something
+            // goes wrong in the init process of the db adapters, we fallback
+            // to window.localStorage
+            var lsFallbackDone       = false;
+            var localStorageFallback = function() {
+                if(lsFallbackDone) {
+                    return false;
+                }
+                lsFallbackDone = true;
+
+                // ignore jshint errors: "possible strict violation"
+                /* jshint ignore:start */
+                try {
+                    this.localStorageFallback = true;
+                    this.adapter              = new LocalStorage();
+                    this.adapterID            = 'local-storage';
+
+                    initCallback.call(self, null);
+                }catch(e) {
+                    errorOut(e);
+                    initCallback.call(self, 'window.localSTorage not supported in this browser: ' +
+                        navigator.userAgent);
+                }
+                /* jshint ignore:end */
+            };
 
             // which adapter shall we use?
             if(options && options.adapterID) {
@@ -62,29 +105,38 @@
                 this.adapterID = aID;
             }
 
+            // does the current browser support idb or websql?
             if(!this.adapter || !this.adapter.isValid()) {
-                // if idb and websql is not supported (eg ie<=9)
-                // we fallback to localstorage
-                this.localStorageFallback = true;
-                this.adapter = new LocalStorage();
-                return initCallback.call(self, null);
-
-                // var errMsg = 'Storage: No valid adapter: ' + this.adapterID;
-                // return initCallback.call(self, errMsg);
-                // throw new Error(errMsg);
+                return localStorageFallback.call(this);
             }
 
-            // need to init the used adapter async
-            this.adapter.init(function(err) {
-                if(err) {
-                    return initCallback.call(self, err);
-                }
+            try {
+                // we need to initialize the used adapter async
+                this.adapter.init(function(err) {
+                    if(err) {
+                        // NOTE: If smt in init() goes wrong, this means that
+                        // idb or websql had some errors so we can fallback to
+                        // LocalStorage here:
+                        return localStorageFallback.call(self);
+                        // return initCallback.call(self, err);
+                    }
 
-                initCallback.call(self, null);
-            });
+                    initCallback.call(self, null);
+                });
+            } catch(e) {
+                // some logging:
+                errorOut(e);
+
+                return localStorageFallback.call(self);
+            }
         };
 
-        // THE API:
+        /**
+         * The API
+         *
+         * NOTE: For LocalStorage we catch all exceptions and pass them as
+         *       first param in the error callback
+         */
         VanillaStorage.prototype = {
             isValid: function() {
                 return this.adapter.isValid();
@@ -94,15 +146,19 @@
                 callback = ensureCallback(callback);
 
                 if(this.localStorageFallback) {
-                    var data;
                     try {
-                        data = this.adapter.get(key);
+                        var data = this.adapter.get(key);
+
+                        if(!data) {
+                            callback('No data found using LS adapter');
+                        }
+                        else {
+                            callback(null, data);
+                        }
                     }
                     catch(e) {
-                        return callback(e);
+                        callback(e);
                     }
-
-                    callback(null, data);
                 }
                 else {
                     this.adapter.get(key, callback);
@@ -115,12 +171,11 @@
                 if(this.localStorageFallback) {
                     try {
                         this.adapter.save(key, data);
+                        callback(null, data);
                     }
                     catch(e) {
-                        return callback(e);
+                        callback(e);
                     }
-
-                    callback(null, data);
                 }
                 else {
                     this.adapter.save(key, data, callback);
@@ -133,12 +188,11 @@
                 if(this.localStorageFallback) {
                     try {
                         this.adapter.delete(key);
+                        callback(null);
                     }
                     catch(e) {
-                        return callback(e);
+                        callback(e);
                     }
-
-                    callback(null);
                 }
                 else {
                     this.adapter.delete(key, callback);
@@ -151,12 +205,11 @@
                 if(this.localStorageFallback) {
                     try {
                         this.adapter.nuke();
+                        callback(null);
                     }
                     catch(e) {
-                        return callback(e);
+                        callback(e);
                     }
-
-                    callback(null);
                 }
                 else {
                     this.adapter.nuke(callback);

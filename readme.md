@@ -80,7 +80,10 @@ Callback functions always have the error as first parameter, data as second if a
 #### Default usage ####
 
 ```javascript
-var options = {},
+var options = {
+        storeName: 'my_data_store', // name of the store ("name of database")
+        version: '1.0' // string for websql, on idb we parseInt
+    },
     vanilla,
     KEY       = 'some-key',
     DEMO_DATA = {foo: 'bar', num:42};
