@@ -20,16 +20,26 @@
             parseKey       = helpers.parseKey,
             out            = helpers.out;
 
-        var IDBStorage = function() {
+        var IDBStorage = function(dbName, version) {
             if(!this.isValid()) {
                 return false;
             }
+            try {
+                version = parseInt(version, 10);
+            }
+            catch(e) {
+                version = 1.0;
+            }
 
-            this.DATABASE_NAME     = 'vanilla_idb';
-            this.DATABASE_VERSION  = 1.0;
-            this.OBJECT_STORE_NAME = 'vanilla_idb_store';
+            if(version < 1 || isNaN(version)) {
+                version = 1.0;
+            }
 
             this.db = null; // filled in init()
+
+            this.DATABASE_VERSION  = version;
+            this.DATABASE_NAME     = dbName || 'idbstore';
+            this.OBJECT_STORE_NAME = this.DATABASE_NAME + '__data';
         };
 
         IDBStorage.prototype = {

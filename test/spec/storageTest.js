@@ -80,7 +80,7 @@ define(function(require) {
     // ----- STEP #1 -----
     function runSuiteForAdapterInIsolation(adapterID, callback) {
         // do not run the tests if adapter is not valid in current browser
-        if(!VanillaStorage.isValid(adapterID) && adapterID !== 'local-storage-dummy') {
+        if(!VanillaStorage.isValid(adapterID) && adapterID !== 'local-storage') {
             return callback('Not valid: ' + adapterID);
         }
 
@@ -95,7 +95,7 @@ define(function(require) {
                         this.adapter = new IDBStorage();
                         this.adapter.init(done);
                         break;
-                    case 'local-storage-dummy':
+                    case 'local-storage':
                         this.adapter = new LocalStorage();
                         this.adapter.init(done);
                         break;
@@ -173,9 +173,11 @@ define(function(require) {
                 it();
             });
 
+            // TODO:
+            // http://mathiasbynens.be/notes/javascript-unicode
             it('should handle utf8 data', function(done) {
                 var self = this;
-                var ORIGINAL_UTF8_STR = 'Säft mÖchän liedööör not for €';
+                var ORIGINAL_UTF8_STR = 'äöü € Δημιουργήθηκε';
                 var utf8String = ORIGINAL_UTF8_STR;
 
                 // @see http://ecmanaut.blogspot.de/2006/07/encoding-decoding-utf8-in-javascript.html
@@ -224,7 +226,7 @@ define(function(require) {
         function runSuiteForCurrentAdapter(adapterID, callback) {
 
             // do not run the tests if adapter is not valid in current browser
-            if(!VanillaStorage.isValid(adapterID) && adapterID !== 'local-storage-dummy') {
+            if(!VanillaStorage.isValid(adapterID) && adapterID !== 'local-storage') {
                 return callback('Not valid: ' + adapterID);
             }
 
@@ -499,7 +501,7 @@ define(function(require) {
 
                 // next:
                 // unknown adapter-id -> will fallback to localStorage (-;
-                adapterID = 'local-storage-dummy';
+                adapterID = 'local-storage';
                 runSuiteForCurrentAdapter(adapterID, function() {
                     log('OK. LocalStorage suite done.');
                 });

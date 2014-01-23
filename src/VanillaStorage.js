@@ -21,12 +21,6 @@
     function factory(LocalStorage, WebSQLStorage, IDBStorage, helpers) {
         var ensureCallback = helpers.ensureCallback;
 
-        // Order is relevant! first valid will be taken
-        var adaptersWeSupport = {
-            'indexeddb-storage': new IDBStorage(),
-            'websql-storage'   : new WebSQLStorage()
-        };
-
         // helper for logging errors
         var errorOut = function() {
             if(console && console.error) {
@@ -34,11 +28,31 @@
             }
         };
 
+        // Order is relevant! first valid will be taken
+        var adaptersWeSupport = {
+            'indexeddb-storage': new IDBStorage(),
+            'websql-storage'   : new WebSQLStorage()
+        };
+
         /**
          * Constructor
          */
         var VanillaStorage = function(options, initCallback) {
             var self = this;
+
+            this.adapter = null;
+
+            // provide defaults
+            options           = options || {};
+            options.storeName = options.storeName || 'vanilla_store';
+            options.version   = options.version || '1.0';
+            initCallback      = ensureCallback(initCallback);
+
+            // overwrite. Order is relevant!
+            adaptersWeSupport = {
+                'indexeddb-storage': new IDBStorage(options.storeName, options.version),
+                'websql-storage'   : new WebSQLStorage(options.storeName, options.version)
+            };
 
             // if idb and websql is not supported (eg ie<=9) or if something
             // goes wrong in the init process of the db adapters, we fallback
@@ -65,10 +79,6 @@
                 }
                 /* jshint ignore:end */
             };
-
-            initCallback = ensureCallback(initCallback);
-
-            this.adapter = null;
 
             // which adapter shall we use?
             if(options && options.adapterID) {

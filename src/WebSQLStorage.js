@@ -12,17 +12,16 @@
             parseKey       = helpers.parseKey;
             // out            = helpers.out
 
-        var WebSQLStorage = function() {
+        var WebSQLStorage = function(dbName, version) {
             if(!this.isValid()) {
                 return false;
             }
 
-            this.db = null;
+            this.db = null; // filled in init()
 
-            this.TABLE_NAME = 'vanilla_store';
-
-            this.DATABASE_NAME    = 'vanilladb';
-            this.DATABASE_VERSION = '1.0.0'; // int !
+            this.DATABASE_NAME      = dbName  || 'websqlstore';
+            this.DATABASE_VERSION   = version || '1.0'; // int !?
+            this.TABLE_NAME         = this.DATABASE_NAME + '__data';
 
             // requesting 50mb is too much on ios7:
             // http://stackoverflow.com/questions/19126034/web-sql-grow-database-for-ios
@@ -33,8 +32,8 @@
 
         WebSQLStorage.prototype = {
             isValid: function() {
-                // TODO better way. safari in private mode?
-                return typeof window.openDatabase === 'function';
+                // TODO better way? safari in private mode?
+                return !!window.openDatabase;
             },
 
             init: function(callback) {
