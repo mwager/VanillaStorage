@@ -26,6 +26,9 @@ mountFolder = function (connect, dir) {
 // templateFramework: 'handlebars'
 
 module.exports = function (grunt) {
+    // load all grunt tasks
+    require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
+
     // TODO checkout more
     var browsers = [{
         browserName: 'iphone',
@@ -75,9 +78,6 @@ module.exports = function (grunt) {
         platform: 'Windows 2008',
         version: '12'
     }];
-
-    // load all grunt tasks
-    require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
     // configurable paths
     var customConfig = {
@@ -145,6 +145,9 @@ module.exports = function (grunt) {
             sleep: {
                 cmd: 'sleep 50000',
             },
+            rm_db_file: {
+                cmd: 'rm -rf Databases.db'
+            },
             mocha: {
                 command:
                 './node_modules/.bin/mocha-phantomjs http://localhost:<%= connect.testserver.options.port %>/test/',
@@ -152,6 +155,10 @@ module.exports = function (grunt) {
             },
             testem: {
                 command: 'testem ci -P 5',
+                stdout: true
+            },
+            generate_git_version_file: {
+                command: 'echo $(git describe --abbrev=0) > version',
                 stdout: true
             }
         }, // end exec
@@ -164,6 +171,14 @@ module.exports = function (grunt) {
                 replacements: [{
                     from: '<!-- testem_includes_by_gruntfile -->',
                     to: '<script src="\/testem.js"><\/script>'
+                }]
+            },
+            version_in_test_index_html: {
+                src: ['./test/index.html'],
+                dest: './test/index.html',
+                replacements: [{
+                    from: '__VERSION__',
+                    to: grunt.file.read('./version').trim()
                 }]
             }
         },
@@ -191,66 +206,6 @@ module.exports = function (grunt) {
                 }
             }
         },
-        /*requirejs: {
-            dist: {
-                // Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
-                options: {
-                    // `name` and `out` is set by grunt-usemin
-                    baseUrl: 'app/scripts',
-                    optimize: 'none', // TODO!?
-
-                    //paths: {
-                    //    'templates': '../../.tmp/scripts/templates'
-                    //},
-
-                    // TODO: Figure out how to make sourcemaps work with grunt-usemin
-                    // https://github.com/yeoman/grunt-usemin/issues/30
-                    //generateSourceMaps: true,
-                    // required to support SourceMaps
-                    // http://requirejs.org/docs/errors.html#sourcemapcomments
-                    preserveLicenseComments: false,
-                    useStrict: true,
-                    wrap: true,
-
-                    //uglify2: {} || 'none' TODO! // https://github.com/mishoo/UglifyJS2
-
-                    pragmasOnSave: {
-                        //removes Handlebars.Parser code (used to compile template strings) set
-                        //it to `false` if you need to parse template strings even after build
-                        // excludeHbsParser : true,
-
-                        // kills the entire plugin set once it's built.
-                        // excludeHbs: true,
-
-                        // removes i18n precompiler, handlebars and json2
-                        // excludeAfterBuild: true
-                    }
-                }
-            }
-        },*/
-
-        // express app
-        express: {
-            options: {
-                // Override defaults here
-                port: '9000'
-            },
-            dev: {
-                options: {
-                    script: 'server/app.js'
-                }
-            },
-            prod: {
-                options: {
-                    script: 'server/app.js'
-                }
-            },
-            test: {
-                options: {
-                    script: 'server/app.js'
-                }
-            }
-        },
 
         // open app and test page
         open: {
@@ -269,6 +224,7 @@ module.exports = function (grunt) {
     // ---------- task definitions ----------
     // run the unit tests using mocha-phantomjs
     grunt.registerTask('test', [
+        'exec:rm_db_file',
         'clean:server',
         'connect:testserver',
         'exec:mocha'
@@ -279,8 +235,16 @@ module.exports = function (grunt) {
         'exec:sleep:10000'
     ]);
 
+    /*
+    grunt.registerTask('versioning', [
+        'exec:generate_git_version_file',
+        'replace:version_in_test_index_html'
+    ]);
+*/
+
     grunt.registerTask('build', [
-        'requirejs'
+        'requirejs',
+        'versioning'
     ]);
 
 
