@@ -71,11 +71,11 @@
                     this.adapter              = new LocalStorage();
                     this.adapterID            = 'local-storage';
 
-                    initCallback.call(self, null);
+                    initCallback.call(self); // no error
                 }catch(e) {
                     errorOut(e);
-                    initCallback.call(self, 'window.localSTorage not supported in this browser: ' +
-                        navigator.userAgent);
+                    initCallback.apply(self, ['window.localStorage not supported in this browser: ' +
+                        navigator.userAgent]);
                 }
                 /* jshint ignore:end */
             };
@@ -118,10 +118,10 @@
                         // idb or websql had some errors so we can fallback to
                         // LocalStorage here:
                         return localStorageFallback.call(self);
-                        // return initCallback.call(self, err);
+                        // return initCallback.apply(self, [err]);
                     }
 
-                    initCallback.call(self, null);
+                    initCallback.call(self); // no error
                 });
             } catch(e) {
                 // some logging:

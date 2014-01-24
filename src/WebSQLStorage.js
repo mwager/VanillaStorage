@@ -32,7 +32,6 @@
 
         WebSQLStorage.prototype = {
             isValid: function() {
-                // TODO better way? safari in private mode?
                 return !!window.openDatabase;
             },
 

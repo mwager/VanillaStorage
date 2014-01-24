@@ -76,6 +76,42 @@ define(function(require) {
         LARGE_LEN = JSON.stringify(LARGE_OBJECT).length;
     })();
 
+    // TODO refactor with better re-use method!
+
+    describe('Basics', function() {
+        it('should initialize with some adapter', function(done) {
+            var storageOptions = {
+                dbName: 'tmp',
+                version: '1.0'
+            };
+
+            new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
+                expect(!err).to.equal(true);
+                done();
+            });
+        });
+
+        it('should fallback to localstorage if initializing idb or websql fails', function(done) {
+            var storageOptions = {
+                adapterID: 'not found'
+
+                // hmm better way to make init process fail in websql and idb?
+                // storeName: 'tmp?',
+                // version: '0.0'
+            };
+
+            new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
+                expect(typeof err).to.equal('undefined');
+                expect(this.adapterID).to.equal('local-storage');
+                done();
+            });
+        });
+    });
+
+
+
+
+
 
     // ----- STEP #1 -----
     function runSuiteForAdapterInIsolation(adapterID, callback) {
@@ -173,8 +209,8 @@ define(function(require) {
                 it();
             });
 
-            // TODO:
-            // http://mathiasbynens.be/notes/javascript-unicode
+            // TODO more utf8/excoding tests?
+            // see http://mathiasbynens.be/notes/javascript-unicode
             it('should handle utf8 data', function(done) {
                 var self = this;
                 var ORIGINAL_UTF8_STR = 'äöü € Δημιουργήθηκε';
@@ -192,11 +228,13 @@ define(function(require) {
                 expect(utf8String).to.equal(ORIGINAL_UTF8_STR);
 
                 this.adapter.save(TMP_KEY, {str: utf8String}, function() {
-                    self.adapter.get(TMP_KEY, function(err, data) {
-                        expect(utf8String).to.equal(data.str);
-                        // log(data.str)
-                        done();
-                    });
+                    setTimeout(function() { // wait a bit
+                        self.adapter.get(TMP_KEY, function(err, data) {
+                            expect(utf8String).to.equal(data.str);
+                            // log(data.str)
+                            done();
+                        });
+                    }, 500);
                 });
             });
 
@@ -243,9 +281,6 @@ define(function(require) {
                         if(err) {
                             return log('ERROR STORAGE: ' + err);
                         }
-
-                        // self.vanilla = this;
-                        // done();
 
                         // cleanup before running tests
                         this.nuke(done);
