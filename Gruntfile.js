@@ -172,15 +172,15 @@ module.exports = function (grunt) {
                     from: '<!-- testem_includes_by_gruntfile -->',
                     to: '<script src="\/testem.js"><\/script>'
                 }]
-            },
-            version_in_test_index_html: {
+            }
+            /*version_in_test_index_html: {
                 src: ['./test/index.html'],
                 dest: './test/index.html',
                 replacements: [{
                     from: '__VERSION__',
                     to: grunt.file.read('./version').trim()
                 }]
-            }
+            }*/
         },
 
         // Require.js Optimizer Config
@@ -240,7 +240,7 @@ module.exports = function (grunt) {
         'exec:generate_git_version_file',
         'replace:version_in_test_index_html'
     ]);
-*/
+    */
 
     grunt.registerTask('build', [
         'requirejs',
