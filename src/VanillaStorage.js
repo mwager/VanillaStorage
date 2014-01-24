@@ -74,7 +74,7 @@
                     initCallback.call(self); // no error
                 }catch(e) {
                     errorOut(e);
-                    initCallback.apply(self, ['window.localSTorage not supported in this browser: ' +
+                    initCallback.apply(self, ['window.localStorage not supported in this browser: ' +
                         navigator.userAgent]);
                 }
                 /* jshint ignore:end */
