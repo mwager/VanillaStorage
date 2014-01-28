@@ -243,8 +243,8 @@ module.exports = function (grunt) {
     */
 
     grunt.registerTask('build', [
-        'requirejs',
-        'versioning'
+        'requirejs'
+        // 'versioning'
     ]);
 
 
