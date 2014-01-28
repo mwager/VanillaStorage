@@ -146,11 +146,11 @@ module.exports = function (grunt) {
                 cmd: 'sleep 50000',
             },
             rm_db_file: {
-                cmd: 'rm -rf Databases.db'
+                cmd: 'rm -rf Databases.db && rm -rf http_127.0.0.1_1234'
             },
             mocha: {
-                command:
-                './node_modules/.bin/mocha-phantomjs http://localhost:<%= connect.testserver.options.port %>/test/',
+                // old: './node_modules/.bin/mocha-phantomjs http://localhost:<%= connect.testserver.options.port %>/test',
+                command: './node_modules/phantomjs/bin/phantomjs --local-storage-path=. --local-storage-quota=100000000000000000 ./node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee http://127.0.0.1:1234/test/',
                 stdout: true
             },
             testem: {
@@ -227,7 +227,8 @@ module.exports = function (grunt) {
         'exec:rm_db_file',
         'clean:server',
         'connect:testserver',
-        'exec:mocha'
+        'exec:mocha',
+        'exec:rm_db_file' // again.
     ]);
     grunt.registerTask('test-server', [
         'clean:server',
