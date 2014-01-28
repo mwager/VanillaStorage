@@ -114,6 +114,9 @@
                 // we need to initialize the used adapter async
                 this.adapter.init(function(err) {
                     if(err) {
+                        // some logging:
+                        errorOut('VanillaStorage.js error initializing adapter', err);
+
                         // NOTE: If smt in init() goes wrong, this means that
                         // idb or websql had some errors so we can fallback to
                         // LocalStorage here:
