@@ -83,14 +83,15 @@
                             db.deleteObjectStore(storeName);
                         }
 
-                        var store = db.createObjectStore(storeName, {
+                        // var store =
+                        db.createObjectStore(storeName, {
                             keyPath: 'id',
                             autoIncrement: false
                         });
 
                         // store.createIndex(key, key, {unique:true});
 
-                        out('---indexed-db--- created store: ' + storeName, store);
+                        // out('---indexed-db--- created store: ' + storeName, store);
                     } catch(e) {
                         callback(e);
                     }
