@@ -13,7 +13,7 @@
  *
  * @author  Michael Wager <mail@mwager.de>
  * @license http://opensource.org/licenses/MIT
- * @version 0.4.6
+ * @version 0.5.0
  */
 (function() {
     'use strict';
