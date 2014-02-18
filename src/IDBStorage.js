@@ -184,6 +184,10 @@
 
                         request.onerror = function(e) {
                             callback(e); // e.value?
+
+                            // http://stackoverflow.com/questions/15876465/javascript-handling-unknownerror
+                            // ? rt docs.
+                            return false;
                         };
                     }
                     catch(e) {
@@ -198,7 +202,7 @@
             },
 
 
-            delete: function(key, callback) {
+            drop: function(key, callback) {
                 callback = ensureCallback(callback);
                 key      = parseKey(key);
 

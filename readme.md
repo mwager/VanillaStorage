@@ -70,7 +70,7 @@ The API is all async and pretty simple, there are 4 public methods:
 
 * `get(key, fn)`
 * `save(key, data, fn)`
-* `delete(key, fn)`
+* `drop(key, fn)`
 * `nuke(fn)`
 
 Callback functions always have the error as first parameter, data as second if any. So if the first parameter of a callback is `undefined` it means the operation was successful.
@@ -98,7 +98,7 @@ var readyToUseAPI = function(err) {
         vanilla.get(KEY, function _fetched(err, data) {
             console.log(data); // -> DEMO_DATA
 
-            vanilla.delete(KEY, function _dropped(err) {
+            vanilla.drop(KEY, function _deleted_(err) {
                 // calling get(KEY) now should have the error passed with message not found
             });
         });

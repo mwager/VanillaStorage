@@ -141,7 +141,7 @@
                 });
             },
 
-            delete: function(key, callback) {
+            drop: function(key, callback) {
                 callback = ensureCallback(callback);
                 key      = parseKey(key);
 
