@@ -161,7 +161,7 @@ define(function(require) {
             });
             it('should delete the stored data', function(done) {
                 var self = this;
-                this.adapter.delete(TMP_KEY, function(err) {
+                this.adapter.drop(TMP_KEY, function(err) {
                     if(err) {
                         console.error('DAAAAAAAAAAAAAAAAMN', err, adapterID);
                     }
@@ -334,7 +334,7 @@ define(function(require) {
 
                     it('should delete data', function(done) {
                         var self = this;
-                        this.vanilla.delete(TMP_KEY, function(err) {
+                        this.vanilla.drop(TMP_KEY, function(err) {
                             if(err) {
                                 log('ERROR', err);
                                 return console.error(err);

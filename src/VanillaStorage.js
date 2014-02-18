@@ -13,7 +13,7 @@
  *
  * @author  Michael Wager <mail@mwager.de>
  * @license http://opensource.org/licenses/MIT
- * @version 0.5.0
+ * @version 0.6.0
  */
 (function() {
     'use strict';
@@ -185,12 +185,12 @@
                 }
             },
 
-            delete: function(key, callback) {
+            drop: function(key, callback) {
                 callback = ensureCallback(callback);
 
                 if(this.localStorageFallback) {
                     try {
-                        this.adapter.delete(key);
+                        this.adapter.drop(key);
                         callback(null);
                     }
                     catch(e) {
@@ -198,7 +198,7 @@
                     }
                 }
                 else {
-                    this.adapter.delete(key, callback);
+                    this.adapter.drop(key, callback);
                 }
             },
 

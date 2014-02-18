@@ -1,9 +1,9 @@
 {
   "name": "vanilla-storage",
-  "version": "0.4.2",
+  "version": "0.6.0",
   "dependencies": {
     "requirejs": "~2.1.5",
-    "local-storage": "~1.0.1"
+    "local-storage": "~1.1.0"
   },
   "devDependencies": {
     "mocha": "~1.15.1",
