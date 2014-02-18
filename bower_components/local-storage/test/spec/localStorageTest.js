@@ -29,7 +29,7 @@ define(function(require) {
 
             expect(this.ls.get('tmp')).to.equal('tmp');
 
-            this.ls.delete('tmp');
+            this.ls.drop('tmp');
 
             expect(this.ls.get('tmp')).to.equal(null);
         });

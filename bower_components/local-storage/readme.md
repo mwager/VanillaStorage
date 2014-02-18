@@ -32,7 +32,7 @@ There are 4 public methods:
 
 * `get(key)`
 * `save(key, data)`
-* `delete(key)`
+* `drop(key)`
 * `nuke()`
 
 ### Examples ###
@@ -60,7 +60,7 @@ obj = ls.get('some-key');
 console.log(typeof obj); // 'object' -> {foo:'bar'}
 
 // delete:
-ls.delete('some-key');
+ls.drop('some-key');
 
 obj = ls.get('some-key'); // null
 

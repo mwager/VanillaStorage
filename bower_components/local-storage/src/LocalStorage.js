@@ -83,7 +83,7 @@
          *
          * @param {string} key  The key
          */
-        delete: function(key) {
+        drop: function(key) {
             key = parseKey(key);
 
             this.storage.removeItem(key);
