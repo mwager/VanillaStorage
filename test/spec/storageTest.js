@@ -22,7 +22,6 @@ define(function(require) {
     // isolation here)
     var IDBStorage    = require('IDBStorage');
     var WebSQLStorage = require('WebSQLStorage');
-    var LocalStorage  = require('LocalStorage');
 
     var DEMO_DATA = {foo: 'bar'};
     var TMP_KEY   = 'some-key';
@@ -91,7 +90,7 @@ define(function(require) {
             });
         });
 
-        it('should fallback to localstorage if initializing idb or websql fails', function(done) {
+        it('should call the callback with error if initializing idb or websql fails', function(done) {
             var storageOptions = {
                 adapterID: 'not found'
 
@@ -101,8 +100,7 @@ define(function(require) {
             };
 
             new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
-                expect(typeof err).to.equal('undefined');
-                expect(this.adapterID).to.equal('local-storage');
+                expect(typeof err).to.equal('string');
                 done();
             });
         });
@@ -129,10 +127,6 @@ define(function(require) {
                         break;
                     case 'indexeddb-storage':
                         this.adapter = new IDBStorage();
-                        this.adapter.init(done);
-                        break;
-                    case 'local-storage':
-                        this.adapter = new LocalStorage();
                         this.adapter.init(done);
                         break;
                     default:
@@ -533,13 +527,6 @@ define(function(require) {
             adapterID = 'websql-storage';
             runSuiteForCurrentAdapter(adapterID, function() {
                 log('OK. WebSQL suite done.');
-
-                // next:
-                // unknown adapter-id -> will fallback to localStorage (-;
-                adapterID = 'local-storage';
-                runSuiteForCurrentAdapter(adapterID, function() {
-                    log('OK. LocalStorage suite done.');
-                });
             });
         });
     }

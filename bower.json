@@ -2,8 +2,7 @@
   "name": "vanilla-storage",
   "version": "0.6.0",
   "dependencies": {
-    "requirejs": "~2.1.5",
-    "local-storage": "~1.1.0"
+    "requirejs": "~2.1.5"
   },
   "devDependencies": {
     "mocha": "~1.15.1",
