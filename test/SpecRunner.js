@@ -116,11 +116,15 @@ require.config({
         VanillaStorage: './src/VanillaStorage',
         WebSQLStorage:  './src/WebSQLStorage',
         IDBStorage:     './src/IDBStorage',
-        storageHelpers: './src/storageHelpers'
+        storageHelpers: './src/storageHelpers',
+
+        lz_string: 'node_modules/lz-string/libs/lz-string-1.3.3'
     },
 
     shim: {
-
+        lz_string: {
+            exports: 'LZString'
+        }
     }
 });
 

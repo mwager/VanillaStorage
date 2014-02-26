@@ -18,7 +18,7 @@
 (function() {
     'use strict';
 
-    function factory(WebSQLStorage, IDBStorage, helpers) {
+    function factory(WebSQLStorage, IDBStorage, helpers, LZString) {
         var ensureCallback = helpers.ensureCallback;
 
         // helper for logging errors
@@ -122,7 +122,16 @@
             get: function(key, callback) {
                 callback = ensureCallback(callback);
 
-                this.adapter.get(key, callback);
+                // var compressed = LZString.compress('HALLO WELT !!!!!!!!!')
+
+                // this.adapter.get(key, callback);
+                this.adapter.get(key, function(err, data) {
+                    if(data) {
+                        // would be too expensive here...
+                        // should go in the adapters themselfs directly?
+                        data = LZString.decompress(data);
+                    }
+                });
             },
 
             save: function(key, data, callback) {
@@ -161,9 +170,10 @@
         define([
                 'WebSQLStorage',
                 'IDBStorage',
-                'storageHelpers'
-            ], function(WebSQLStorage, IDBStorage, storageHelpers) {
-                var VanillaStorage = factory(WebSQLStorage, IDBStorage, storageHelpers);
+                'storageHelpers',
+                'lz_string'
+            ], function(WebSQLStorage, IDBStorage, storageHelpers, LZString) {
+                var VanillaStorage = factory(WebSQLStorage, IDBStorage, storageHelpers, LZString);
                 return VanillaStorage;
             }
         );
@@ -173,7 +183,8 @@
         window.VanillaStorage = factory(
             window.WebSQLStorage,
             window.IDBStorage,
-            window.storageHelpers
+            window.storageHelpers,
+            window.LZString
         );
     }
 })();
