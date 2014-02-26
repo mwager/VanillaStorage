@@ -9,13 +9,22 @@
 
     function factory(helpers) {
         var ensureCallback = helpers.ensureCallback,
-            parseKey       = helpers.parseKey;
-            // out            = helpers.out
+            parseKey       = helpers.parseKey,
+            out            = helpers.out;
 
-        var WebSQLStorage = function(dbName, version) {
+        var WebSQLStorage = function(options) {
             if(!this.isValid()) {
                 return false;
             }
+            if(!options) {
+                options = {};
+            }
+            var dbName  = options.storeName,
+                version = options.version;
+
+            this.compressor = typeof options.compressor !== 'undefined' ?
+                                options.compressor :
+                                false;
 
             this.db = null; // filled in init()
 
@@ -81,7 +90,9 @@
                     return callback('No db available');
                 }
 
-                var sql = 'SELECT id, value FROM ' + this.TABLE_NAME + ' WHERE id = ?';
+                var self = this;
+
+                var sql = 'SELECT value FROM ' + this.TABLE_NAME + ' WHERE id = ?';
 
                 this.db.transaction(function (t) {
                     t.executeSql(sql, [key], function success(t, results) {
@@ -90,6 +101,10 @@
                         if(results.rows.length > 0) {
                             data = results.rows.item(0).value;
                             try {
+                                // TODO config "if (self.compressor)...!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                                data = self.compressor.decompressFromUTF16(data);
+                                // log('decompressed: ' + data)
+
                                 data = JSON.parse(data);
                             }
                             catch(e) {
@@ -122,8 +137,11 @@
 
                 try {
                     data = JSON.stringify(dataIn);
+                    data = this.compressor.compressToUTF16(data);
+                    // log('STORING: ' + data)
                 }
                 catch(e) {
+                    out(e);
                     return callback('JSON Parse error: ' + dataIn);
                 }
 

@@ -2,27 +2,67 @@
 <html class="no-js" lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VanillaStorage.js</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description"
+          content="VanillaStorage.js - cross platform client side storage abstraction"/>
+    <meta name="keywords"
+          content="atonego app todo todoapp todolist reminder notice forgot sync share team productivity aufgaben erledigen vergessen merkzettel">
+
     <link rel="stylesheet" href="utils/foundation.css" />
   </head>
   <body>
+    <header>
+      <div class="row">
+        <div class="large-12 columns">
+          <h1 class="text-center">VanillaStorage.js</h1>
+          <hr>
+          <h3 class="subheader">Simple key/value based storage abstraction lib for usage in browser
+          based environments. Uses IndexedDB with fallback to [deprecated but
+          still widely supported and needed] WebSQL.</h3>
+          <hr>
 
-    <div class="row">
-      <div class="large-12 columns">
-        <h1 class="text-center">VanillaStorage.js</h1>
-        <hr>
-        <h3 class="subheader">Simple key/value based storage abstraction lib for usage in browser
-        based environments. Uses IndexedDB with fallback to [deprecated but
-        still widely supported and needed] WebSQL.</h3>
-
-        <hr>
-
-        <p class="text-center">Check out the code &amp; docs on
-        <a href="https://github.com/mwager/VanillaStorage">github</a></p>
-        <p class="text-center">Watch the tests <a href="./test">here</a> or on
-        <a href="https://travis-ci.org/mwager/VanillaStorage">travis</a></p>
+          <p class="text-center">Check out the code &amp; docs on
+          <a href="https://github.com/mwager/VanillaStorage">github</a></p>
+          <p class="text-center">Watch the tests <a href="./test">here</a> or on
+          <a href="https://travis-ci.org/mwager/VanillaStorage">travis</a></p>
+        </div>
       </div>
-    </div>
+    </header>
+
+    <!--
+    <section role="main">
+      <div class="row">
+        <div class="large-12 columns">
+          <hr>
+          <div id="markdown-content">markdown goes here</div>
+        </div>
+      </div>
+    </section>
+
+    <script type="text/javascript" src="http://zeptojs.com/zepto.js"></script>
+    <script type="text/javascript" src="test/lib/markdown.min.js"></script>
+    <script type="text/javascript">
+    // include the markdown of the readme...
+    $(function() {
+      var log = function() {
+        console && console.log.apply(console, arguments)
+      }
+
+      $.get('readme.md', function(markdownFromReadme) {
+
+        try {
+          var html = window.markdown.toHTML(markdownFromReadme);
+        } catch(e) {
+          log(e)
+        }
+
+        // log(html)
+        $('#markdown-content').html(html)
+      })
+    })
+    </script>
+    -->
   </body>
 </html>

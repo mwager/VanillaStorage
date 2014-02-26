@@ -20,10 +20,16 @@
             parseKey       = helpers.parseKey,
             out            = helpers.out;
 
-        var IDBStorage = function(dbName, version) {
+        var IDBStorage = function(options) {
             if(!this.isValid()) {
                 return false;
             }
+            if(!options) {
+                options = {};
+            }
+            var dbName  = options.storeName,
+                version = options.version;
+
             try {
                 version = parseInt(version, 10);
             }

@@ -116,7 +116,10 @@ vanilla = new VanillaStorage(options, readyToUseAPI);
 
 ```javascript
 // you can also use the adapters standalone
-var wsql = new WebSQLStorage();
+var wsql = new WebSQLStorage({
+    storeName: 'my_store',
+    version: '1.0'
+});
 console.log(wsql.isValid());
 
 wsql.init(function ready(err) {
@@ -128,7 +131,10 @@ wsql.init(function ready(err) {
     }
 });
 
-var idb = new IDBStorage();
+var idb = new IDBStorage({
+    storeName: 'my_data_store',
+    version: 1.0
+});
 if(idb.isValid()) {
     idb.init(function ready(err) {
         if(!err) {

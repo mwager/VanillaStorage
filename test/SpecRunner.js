@@ -148,9 +148,9 @@ function() {
             window.mocha.assertionCounter + '</em></li>');
     }
 
-    // log(testSuite.specs)
     var specs = [
-        'test/spec/storageTest'
+        'test/spec/isolationTests',
+        'test/spec/vanillaTests'
     ];
     require(specs, function() {
         // on dom ready require all specs and run

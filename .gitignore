@@ -5,6 +5,7 @@
 
 # phantomjs storage dir
 /http_localhost_1234
+/http_127.0.0.1_1234
 /Databases.db
 
 /test/index_testem.html

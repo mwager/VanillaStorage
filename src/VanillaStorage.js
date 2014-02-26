@@ -48,10 +48,13 @@
             options.version   = options.version || '1.0';
             initCallback      = ensureCallback(initCallback);
 
+            // TODO if options.useCompression
+            options.compressor = LZString;
+
             // overwrite. Order is relevant!
             adaptersWeSupport = {
-                'indexeddb-storage': new IDBStorage(options.storeName, options.version),
-                'websql-storage'   : new WebSQLStorage(options.storeName, options.version)
+                'indexeddb-storage': new IDBStorage(options),
+                'websql-storage'   : new WebSQLStorage(options)
             };
 
             // which adapter shall we use?
@@ -74,7 +77,8 @@
             var aID = this.adapterID;
 
             // force use websql in cordova. on android 4,
-            // idb is valid but lots of strange errors
+            // idb is valid but lots of strange errors,
+            // websql officially supported by phonegap
             if(typeof window.cordova !== 'undefined') {
                 aID            = 'websql-storage';
                 this.adapter   = adaptersWeSupport[aID];
@@ -122,16 +126,7 @@
             get: function(key, callback) {
                 callback = ensureCallback(callback);
 
-                // var compressed = LZString.compress('HALLO WELT !!!!!!!!!')
-
-                // this.adapter.get(key, callback);
-                this.adapter.get(key, function(err, data) {
-                    if(data) {
-                        // would be too expensive here...
-                        // should go in the adapters themselfs directly?
-                        data = LZString.decompress(data);
-                    }
-                });
+                this.adapter.get(key, callback);
             },
 
             save: function(key, data, callback) {
