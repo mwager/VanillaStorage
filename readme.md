@@ -156,6 +156,10 @@ Run the suite in real browsers via `testem`:
 
 
 ## TODOs ##
+* compression via config? performance?
+http://www.js2node.com/html5/html5-localstorage-compression
+http://jsfiddle.net/jU7E4/3/
+
 * search the repo for `TODO`...
 * figure out way to store more data using phantomjs. increase in storageTest, see TODO. or only on browsers? testem etc...
 
@@ -169,3 +173,5 @@ Run the suite in real browsers via `testem`:
 
 * more options: pass db name and version, ...
 * create more advanced tests in more browsers
+* see this https://developer.apple.com/library/ios/documentation/AppleApplications/Reference/SafariWebContent/Client-SideStorage/Client-SideStorage.html#//apple_ref/doc/uid/TP40002051-CH4-SW5
+
