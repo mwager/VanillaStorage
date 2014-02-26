@@ -18,7 +18,7 @@
 (function() {
     'use strict';
 
-    function factory(LocalStorage, WebSQLStorage, IDBStorage, helpers) {
+    function factory(WebSQLStorage, IDBStorage, helpers) {
         var ensureCallback = helpers.ensureCallback;
 
         // helper for logging errors
@@ -54,32 +54,6 @@
                 'websql-storage'   : new WebSQLStorage(options.storeName, options.version)
             };
 
-            // if idb and websql is not supported (eg ie<=9) or if something
-            // goes wrong in the init process of the db adapters, we fallback
-            // to window.localStorage
-            var lsFallbackDone       = false;
-            var localStorageFallback = function() {
-                if(lsFallbackDone) {
-                    return false;
-                }
-                lsFallbackDone = true;
-
-                // ignore jshint errors: "possible strict violation"
-                /* jshint ignore:start */
-                try {
-                    this.localStorageFallback = true;
-                    this.adapter              = new LocalStorage();
-                    this.adapterID            = 'local-storage';
-
-                    initCallback.call(self); // no error
-                }catch(e) {
-                    errorOut(e);
-                    initCallback.apply(self, ['window.localStorage not supported in this browser: ' +
-                        navigator.userAgent]);
-                }
-                /* jshint ignore:end */
-            };
-
             // which adapter shall we use?
             if(options && options.adapterID) {
                 this.adapter   = adaptersWeSupport[options.adapterID];
@@ -97,17 +71,19 @@
                 }
             }
 
+            var aID = this.adapterID;
+
             // force use websql in cordova. on android 4,
             // idb is valid but lots of strange errors
             if(typeof window.cordova !== 'undefined') {
-                var aID        = 'websql-storage';
+                aID            = 'websql-storage';
                 this.adapter   = adaptersWeSupport[aID];
                 this.adapterID = aID;
             }
 
             // does the current browser support idb or websql?
             if(!this.adapter || !this.adapter.isValid()) {
-                return localStorageFallback.call(this);
+                return initCallback.apply(self, ['no adapter or adapter not valid - id=' + aID]);
             }
 
             try {
@@ -118,10 +94,8 @@
                         errorOut('VanillaStorage.js error initializing adapter', err);
 
                         // NOTE: If smt in init() goes wrong, this means that
-                        // idb or websql had some errors so we can fallback to
-                        // LocalStorage here:
-                        return localStorageFallback.call(self);
-                        // return initCallback.apply(self, [err]);
+                        // idb or websql had some errors so we return an error here
+                        return initCallback.apply(self, ['error in init of adapter id=' + aID]);
                     }
 
                     initCallback.call(self); // no error
@@ -130,7 +104,7 @@
                 // some logging:
                 errorOut(e);
 
-                return localStorageFallback.call(self);
+                return initCallback.apply(self, ['exception in init of adapter id=' + aID]);
             }
         };
 
@@ -148,75 +122,25 @@
             get: function(key, callback) {
                 callback = ensureCallback(callback);
 
-                if(this.localStorageFallback) {
-                    try {
-                        var data = this.adapter.get(key);
-
-                        if(!data) {
-                            callback('No data found using LS adapter');
-                        }
-                        else {
-                            callback(null, data);
-                        }
-                    }
-                    catch(e) {
-                        callback(e);
-                    }
-                }
-                else {
-                    this.adapter.get(key, callback);
-                }
+                this.adapter.get(key, callback);
             },
 
             save: function(key, data, callback) {
                 callback = ensureCallback(callback);
 
-                if(this.localStorageFallback) {
-                    try {
-                        this.adapter.save(key, data);
-                        callback(null, data);
-                    }
-                    catch(e) {
-                        callback(e);
-                    }
-                }
-                else {
-                    this.adapter.save(key, data, callback);
-                }
+                this.adapter.save(key, data, callback);
             },
 
             drop: function(key, callback) {
                 callback = ensureCallback(callback);
 
-                if(this.localStorageFallback) {
-                    try {
-                        this.adapter.drop(key);
-                        callback(null);
-                    }
-                    catch(e) {
-                        callback(e);
-                    }
-                }
-                else {
-                    this.adapter.drop(key, callback);
-                }
+                this.adapter.drop(key, callback);
             },
 
             nuke: function(callback) {
                 callback = ensureCallback(callback);
 
-                if(this.localStorageFallback) {
-                    try {
-                        this.adapter.nuke();
-                        callback(null);
-                    }
-                    catch(e) {
-                        callback(e);
-                    }
-                }
-                else {
-                    this.adapter.nuke(callback);
-                }
+                this.adapter.nuke(callback);
             }
         };
 
@@ -235,12 +159,11 @@
     // Export using AMD support...
     if(typeof define === 'function' && define.amd) {
         define([
-                'LocalStorage',
                 'WebSQLStorage',
                 'IDBStorage',
                 'storageHelpers'
-            ], function(LocalStorage, WebSQLStorage, IDBStorage, storageHelpers) {
-                var VanillaStorage = factory(LocalStorage, WebSQLStorage, IDBStorage, storageHelpers);
+            ], function(WebSQLStorage, IDBStorage, storageHelpers) {
+                var VanillaStorage = factory(WebSQLStorage, IDBStorage, storageHelpers);
                 return VanillaStorage;
             }
         );
@@ -248,7 +171,6 @@
     // ...or simply to the global namespace
     else {
         window.VanillaStorage = factory(
-            window.LocalStorage,
             window.WebSQLStorage,
             window.IDBStorage,
             window.storageHelpers

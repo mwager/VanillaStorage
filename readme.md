@@ -6,7 +6,7 @@
 
 [Watch the tests on saucelabs](https://saucelabs.com/u/mwager)
 
-Simple key/value based storage abstraction lib for usage in browser based environments. Uses IndexedDB with fallback to [deprecated but still widely supported and needed] WebSQL. If also WebSQL is not available (eg IE <= 9) it will fallback to `window.localStorage`.
+Simple key/value based storage abstraction lib for usage in browser based environments. Uses IndexedDB with fallback to [deprecated but still widely supported and needed] WebSQL. If none of both storage adapters is available or the initialization fails, the ready-callback will be called with an error as the first parameter.
 
 ## Demo ##
 
@@ -30,12 +30,11 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
 
 See `dist/vanilla-storage.js`, or if you want to build it yourself:
 
-    $ grunt build # creates dist/vanilla-storage.js for production usage
+    $ grunt build # creates dist/vanilla-storage.js ready for production usage
 
 ### Dependencies ###
 
-* [LocalStorage.js](https://github.com/mwager/LocalStorage)
-
+* none (-;
 
 ### Global vs. AMD ###
 
@@ -43,7 +42,6 @@ Either include the files via script tags:
 
 ```html
 <script src="path/to/vanilla-storage/src/storageHelpers.js"></script>
-<script src="path/to/LocalStorage/src/LocalStorage.js"></script>
 <script src="path/to/vanilla-storage/src/WebSQLStorage.js"></script>
 <script src="path/to/vanilla-storage/src/IDBStorage.js"></script>
 <script src="path/to/vanilla-storage/src/VanillaStorage.js"></script>
@@ -55,7 +53,6 @@ Either include the files via script tags:
 ...
     paths: {
         VanillaStorage: 'path/to/src/VanillaStorage',
-        LocalStorage:   'path/to/LocalStorage/src/LocalStorage',
         WebSQLStorage:  'path/to/src/WebSQLStorage',
         IDBStorage:     'path/to/src/IDBStorage',
         storageHelpers: 'path/to/src/storageHelpers'

@@ -217,7 +217,9 @@
                     var store = trans.objectStore(storeName);
 
                     try {
-                        var request = store.delete(key);
+                        // fix for IE:
+                        // var request = store.delete(key);
+                        var request = store['delete'](key);
 
                         request.onsuccess = function(/*e*/) {
                             callback(null);
