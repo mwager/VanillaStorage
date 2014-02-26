@@ -9,58 +9,21 @@ define(function(require) {
     var VanillaStorage = require('VanillaStorage');
     var IDBStorage     = require('IDBStorage');
     var WebSQLStorage  = require('WebSQLStorage');
-    var LZString       = require('lz_string');
+
+    // TODO test the compression here too.
+    // var LZString       = require('lz_string');
 
     var TMP_KEY   = 'some-key';
 
-    function getRandomBetween(min, max) {
+    /*function getRandomBetween(min, max) {
         return parseInt(window.Math.random() * (max - min) + min, 10);
-    }
+    }*/
 
-    // generate some demo data
-    var BIG_STRING = [];
-    var LARGE_OBJECT = {};
-    var LARGE_LEN;
+    // ca. 1MB an demo json daten
+    var LARGE_OBJECT = window.DEMO_JSON_FROM_FIXTURE_FILE;
+    var LARGE_OBJECT_AS_STRING = JSON.stringify(LARGE_OBJECT);
+    var LARGE_LEN   = LARGE_OBJECT_AS_STRING.length;
     var factor = 1024;
-    var size   = 1.0 * factor * factor;
-
-    // TODO better? more tests, more data.
-    // If phantomjs makes trouble, do it only in REAL browsers!
-    var ua          = navigator.userAgent.toLowerCase();
-    var isPhantomjs = (/phantomjs/).test(ua);
-
-    (function __generateDemoData() {
-        var letters = 'abcdefghijklmnopqrstuvwxyz';
-        letters    += letters.toUpperCase() + '123456789';
-
-        var idx, i;
-
-        for(i = 0; i < size; i++) {
-            idx = getRandomBetween(0, letters.length);
-            // log(idx, letters[idx])
-            BIG_STRING.push(letters[idx]);
-        }
-
-        BIG_STRING = BIG_STRING.join('');
-
-        // use 10 MB on real browsers, 2MB on PhantomJS
-        var MAX = isPhantomjs ? 2 : 10;
-
-        for(i = 0; i < MAX; i ++) {
-            var t = {};
-            for(var j = 0; j < 10; j ++) {
-                t.largeString = BIG_STRING;
-                t.aNum = 1235678976543;
-                t.aNum2 = 1235678976543.12345678987654;
-                /* jshint ignore:start */
-                // t.fn = function() { var a = BIG_STRING; };
-                /* jshint ignore:end */
-            }
-            LARGE_OBJECT[i] = t;
-        }
-
-        LARGE_LEN = JSON.stringify(LARGE_OBJECT).length;
-    })();
 
     // TODO refactor with better re-use method!
 
@@ -78,7 +41,7 @@ define(function(require) {
                     case 'websql-storage':
                         this.adapter = new WebSQLStorage({
                             // inject the compressor object here manually
-                            compressor: LZString
+                            // compressor: LZString
                         });
                         this.adapter.init(done);
                         break;

@@ -81,7 +81,9 @@ Callback functions always have the error as first parameter, data as second if a
 ```javascript
 var options = {
         storeName: 'my_data_store', // name of the store ("name of database")
-        version: '1.0' // string for websql, on idb we parseInt
+        version: '1.0', // string for websql, on idb we parseInt
+
+        useCompression: true|false // switch on compression via LZString lib (EXPERIMENTAL! only supported in websql yet)
     },
     vanilla,
     KEY       = 'some-key',

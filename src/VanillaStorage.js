@@ -48,8 +48,9 @@
             options.version   = options.version || '1.0';
             initCallback      = ensureCallback(initCallback);
 
-            // TODO if options.useCompression
-            options.compressor = LZString;
+            if (options.useCompression === true) {
+                options.compressor = LZString;
+            }
 
             // overwrite. Order is relevant!
             adaptersWeSupport = {

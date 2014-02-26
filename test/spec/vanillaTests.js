@@ -8,7 +8,7 @@
  * 2. we run a suite for the vanilla-frontend forcing each specified adapter
  *    behind the scenes by passing it as config
  *
- * This way we are testing all the things in isolation and together as a whole.
+ * This way we are testing all the @see [description] in isolation and together as a whole.
  *
  * @author Michael Wager <mail@mwager.de>
  */
@@ -23,11 +23,22 @@ define(function(require) {
     var DEMO_DATA = {foo: 'bar'};
     var TMP_KEY   = 'some-key';
 
-    // generate some demo data
-    var BIG_STRING = [];
-    var factor = 1024;
-    var size   = 1.0 * factor * factor;
+    // ~1MB demo json data, that's ok for testing via phantomjs...
+    var LARGE_OBJECT = window.DEMO_JSON_FROM_FIXTURE_FILE;
 
+    // ...but on real devices/browsers we want MORE:
+    var ua          = navigator.userAgent.toLowerCase();
+    var isPhantomjs = (/phantomjs/).test(ua);
+    if(!isPhantomjs) {
+        LARGE_OBJECT = [];
+        for (var i = 0; i < 5; i++) { // ca 5mb
+            LARGE_OBJECT.push(window.DEMO_JSON_FROM_FIXTURE_FILE);
+        }
+    }
+
+    var LARGE_OBJECT_AS_STRING = JSON.stringify(LARGE_OBJECT);
+    var LARGE_LEN   = LARGE_OBJECT_AS_STRING.length;
+    var factor = 1024;
 
     // TODO refactor with better re-use method!
 
@@ -74,8 +85,12 @@ define(function(require) {
             before(function(done) {
                 this.isIndexedDBAdapter = /indexeddb/.test(adapterID);
 
+                log('========== STARTING TESTSUITE - useCompression? ' + window.__USE_COMPRESSION + '==========');
+
                 var storageOptions = {
-                    adapterID: adapterID
+                    adapterID: adapterID,
+
+                    useCompression: window.__USE_COMPRESSION
                 };
 
                 this.vanilla = new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
@@ -285,13 +300,13 @@ define(function(require) {
 
                     var start = window.__now();
 
-                    this.vanilla.save(TMP_KEY, {aString: BIG_STRING}, function(err, data) {
+                    this.vanilla.save(TMP_KEY, LARGE_OBJECT, function(err/*, data*/) {
                         expect(err).to.equal(null);
-                        expect(BIG_STRING).to.equal(data.aString);
+                        // expect(BIG_STRING).to.equal(data.aString);
 
                         // show some stats
                         var time = (window.__now() - start) / 1000;
-                        log('It took ~' + window.round(time, 3) + 's to store ' + size/factor/factor +
+                        log('It took ~' + window.round(time, 3) + 's to store ' + LARGE_LEN/factor/factor +
                             'MB of data using the ' + adapterID + ' adapter');
 
                         done();
@@ -301,11 +316,13 @@ define(function(require) {
                     var start = window.__now();
 
                     this.vanilla.get(TMP_KEY, function(err, data) {
-                        expect(typeof data.aString).to.not.equal('undefined');
+                        expect(err).to.equal(null);
+                        expect(typeof data).to.equal('object');
+                        expect(JSON.stringify(data)).to.equal(LARGE_OBJECT_AS_STRING);
 
                         // show some stats
                         var time = (window.__now() - start) / 1000;
-                        log('It took ~' + window.round(time, 3) + 's to read ' + size/factor/factor +
+                        log('It took ~' + window.round(time, 3) + 's to read ' + LARGE_LEN/factor/factor +
                             'MB of data using the ' + adapterID + ' adapter');
 
                         done();
@@ -334,6 +351,13 @@ define(function(require) {
         adapterID = 'websql-storage';
         runSuiteForCurrentAdapter(adapterID, function() {
             log('OK. WebSQL suite done.');
+
+            // same again with compression enabled (websql only)
+            window.__USE_COMPRESSION = true;
+            adapterID = 'websql-storage';
+            runSuiteForCurrentAdapter(adapterID, function() {
+                log('OK. WebSQL suite with compression enabled done.');
+            });
         });
     });
 });

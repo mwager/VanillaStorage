@@ -197,7 +197,7 @@
                         };
                     }
                     catch(e) {
-                        out('IDB Error save at key=' + key, e, ' data: ', data, 'KEY: ' + key);
+                        out('IDB Error save at key=' + key, ' data: ', data, ' error: ', e);
                         return callback(e);
                     }
                 }

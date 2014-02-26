@@ -101,9 +101,10 @@
                         if(results.rows.length > 0) {
                             data = results.rows.item(0).value;
                             try {
-                                // TODO config "if (self.compressor)...!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                                data = self.compressor.decompressFromUTF16(data);
-                                // log('decompressed: ' + data)
+                                if (self.compressor) {
+                                    data = self.compressor.decompressFromUTF16(data);
+                                    // log('decompressed: ' + data)
+                                }
 
                                 data = JSON.parse(data);
                             }
@@ -137,8 +138,10 @@
 
                 try {
                     data = JSON.stringify(dataIn);
-                    data = this.compressor.compressToUTF16(data);
-                    // log('STORING: ' + data)
+                    if (this.compressor) {
+                        data = this.compressor.compressToUTF16(data);
+                        // log('STORING: ' + data)
+                    }
                 }
                 catch(e) {
                     out(e);
