@@ -26,6 +26,8 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
     $ npm install && bower install
     $ grunt test
 
+Note that `gh-pages` is the default branch to make sure to update [the project site](http://mwager.github.io/VanillaStorage/) and [tests](http://mwager.github.io/VanillaStorage/test/) on every push ([see this tweet](https://twitter.com/sindresorhus/status/438357837014896640)). That's why we commit the `bower_components` too.
+
 ### Optimized source ###
 
 See `dist/vanilla-storage.js`, or if you want to build it yourself:
