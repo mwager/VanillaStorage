@@ -18,7 +18,7 @@
 (function() {
     'use strict';
 
-    function factory(WebSQLStorage, IDBStorage, helpers, LZString) {
+    function factory(WebSQLStorage, IDBStorage, helpers) {
         var ensureCallback = helpers.ensureCallback;
 
         // helper for logging errors
@@ -47,10 +47,6 @@
             options.storeName = options.storeName || 'vanilla_store';
             options.version   = options.version || '1.0';
             initCallback      = ensureCallback(initCallback);
-
-            if (options.useCompression === true) {
-                options.compressor = LZString;
-            }
 
             // overwrite. Order is relevant!
             adaptersWeSupport = {
@@ -166,10 +162,9 @@
         define([
                 'WebSQLStorage',
                 'IDBStorage',
-                'storageHelpers',
-                'lz_string'
-            ], function(WebSQLStorage, IDBStorage, storageHelpers, LZString) {
-                var VanillaStorage = factory(WebSQLStorage, IDBStorage, storageHelpers, LZString);
+                'storageHelpers'
+            ], function(WebSQLStorage, IDBStorage, storageHelpers) {
+                var VanillaStorage = factory(WebSQLStorage, IDBStorage, storageHelpers);
                 return VanillaStorage;
             }
         );
@@ -179,8 +174,7 @@
         window.VanillaStorage = factory(
             window.WebSQLStorage,
             window.IDBStorage,
-            window.storageHelpers,
-            window.LZString
+            window.storageHelpers
         );
     }
 })();
