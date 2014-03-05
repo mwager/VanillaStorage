@@ -22,10 +22,6 @@
             var dbName  = options.storeName,
                 version = options.version;
 
-            this.compressor = typeof options.compressor !== 'undefined' ?
-                                options.compressor :
-                                false;
-
             this.db = null; // filled in init()
 
             this.DATABASE_NAME      = dbName  || 'websqlstore';
@@ -90,8 +86,6 @@
                     return callback('No db available');
                 }
 
-                var self = this;
-
                 var sql = 'SELECT value FROM ' + this.TABLE_NAME + ' WHERE id = ?';
 
                 this.db.transaction(function (t) {
@@ -101,11 +95,6 @@
                         if(results.rows.length > 0) {
                             data = results.rows.item(0).value;
                             try {
-                                if (self.compressor) {
-                                    data = self.compressor.decompressFromUTF16(data);
-                                    // log('decompressed: ' + data)
-                                }
-
                                 data = JSON.parse(data);
                             }
                             catch(e) {
@@ -138,10 +127,6 @@
 
                 try {
                     data = JSON.stringify(dataIn);
-                    if (this.compressor) {
-                        data = this.compressor.compressToUTF16(data);
-                        // log('STORING: ' + data)
-                    }
                 }
                 catch(e) {
                     out(e);

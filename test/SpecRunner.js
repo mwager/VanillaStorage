@@ -99,7 +99,6 @@
 
 
 require.config({
-    // TODO cordova. baseUrl: window.__test_config__.requirejsBaseUrl,
     baseUrl: '../',
 
     // dev only:
@@ -116,15 +115,11 @@ require.config({
         VanillaStorage: './src/VanillaStorage',
         WebSQLStorage:  './src/WebSQLStorage',
         IDBStorage:     './src/IDBStorage',
-        storageHelpers: './src/storageHelpers',
-
-        lz_string: 'node_modules/lz-string/libs/lz-string-1.3.3'
+        storageHelpers: './src/storageHelpers'
     },
 
     shim: {
-        lz_string: {
-            exports: 'LZString'
-        }
+
     }
 });
 

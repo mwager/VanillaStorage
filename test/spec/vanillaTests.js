@@ -85,12 +85,8 @@ define(function(require) {
             before(function(done) {
                 this.isIndexedDBAdapter = /indexeddb/.test(adapterID);
 
-                log('========== STARTING TESTSUITE - useCompression? ' + window.__USE_COMPRESSION + '==========');
-
                 var storageOptions = {
-                    adapterID: adapterID,
-
-                    useCompression: window.__USE_COMPRESSION
+                    adapterID: adapterID
                 };
 
                 this.vanilla = new VanillaStorage(storageOptions, function __readyToUseAPI(err) {
@@ -351,13 +347,6 @@ define(function(require) {
         adapterID = 'websql-storage';
         runSuiteForCurrentAdapter(adapterID, function() {
             log('OK. WebSQL suite done.');
-
-            // same again with compression enabled (websql only)
-            window.__USE_COMPRESSION = true;
-            adapterID = 'websql-storage';
-            runSuiteForCurrentAdapter(adapterID, function() {
-                log('OK. WebSQL suite with compression enabled done.');
-            });
         });
     });
 });
