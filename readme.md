@@ -10,7 +10,7 @@ Simple key/value based storage abstraction lib for usage in browser based enviro
 
 ## Demo ##
 
-[JSFiddle](http://jsfiddle.net/G8h2V/9/) (Use chrome dev tools to inspect the stored IndexedDB data)
+[JSFiddle](http://jsfiddle.net/G8h2V/10/) (Use chrome dev tools to inspect the stored IndexedDB data)
 
 ## Installation ##
 
