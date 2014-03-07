@@ -144,6 +144,21 @@ define(function(require) {
                     });
                 });
 
+                it('should read all data', function(done) {
+                    this.vanilla.getAll(function(err, data) {
+                        expect(err).to.equal(null);
+                        expect(typeof data).to.equal('object');
+                        done();
+                    });
+                });
+
+                it('should get all storage size', function(done) {
+                    this.vanilla.__getStorageSize(function(err, size) {
+                        expect(typeof size).to.equal('number');
+                        done();
+                    });
+                });
+
                 it('should delete data', function(done) {
                     var self = this;
                     this.vanilla.drop(TMP_KEY, function(err) {

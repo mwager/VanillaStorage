@@ -115,6 +115,52 @@
                 });
             },
 
+            getAll: function(callback) {
+                callback = ensureCallback(callback);
+                if(!this.db) {
+                    return callback('No db available');
+                }
+
+                var sql = 'SELECT id, value FROM ' + this.TABLE_NAME;
+
+                this.db.transaction(function (t) {
+                    t.executeSql(sql, [], function success(t, results) {
+                        var data = [];
+                        var i, item, key, value;
+                        var len = results.rows.length;
+
+                        for(i = 0; i < len; i++) {
+                            item  = results.rows.item(i);
+                            key   = item.id;
+                            value = item.value;
+
+                            try {
+                                value = JSON.parse(value);
+                            }
+                            catch(e) {
+                                out(e);
+                                value = null;
+                            }
+
+                            data.push({
+                                key:  key,
+                                data: value
+                            });
+                        }
+
+                        if(data) {
+                            callback(null, data);
+                        }
+                        else {
+                            callback('No records found');
+                        }
+                    });
+                }, function fail(e/*, i*/) {
+                    callback(e);
+                    return true;
+                });
+            },
+
             save: function(key, dataIn, callback) {
                 callback = ensureCallback(callback);
                 key      = parseKey(key);

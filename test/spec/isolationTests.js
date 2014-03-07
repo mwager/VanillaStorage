@@ -24,6 +24,7 @@ define(function(require) {
     var LARGE_OBJECT_AS_STRING = JSON.stringify(LARGE_OBJECT);
     var LARGE_LEN   = LARGE_OBJECT_AS_STRING.length;
     var factor = 1024;
+    var testData = ['hallo welt', {foo: 'bar'}];
 
     // TODO refactor with better re-use method!
 
@@ -40,8 +41,6 @@ define(function(require) {
                 switch(adapterID) {
                     case 'websql-storage':
                         this.adapter = new WebSQLStorage({
-                            // inject the compressor object here manually
-                            // compressor: LZString
                         });
                         this.adapter.init(done);
                         break;
@@ -58,7 +57,6 @@ define(function(require) {
                 expect(typeof this.adapter).to.equal('object');
             });
             it('should store data', function(done) {
-                var testData = ['hallo welt', {foo: 'bar'}];
                 this.adapter.save(TMP_KEY, testData, function(err, data) {
                     expect(!!err).to.equal(false);
                     expect(data[0]).to.equal('hallo welt');
@@ -71,6 +69,23 @@ define(function(require) {
                     expect(data[0]).to.equal('hallo welt');
                     expect(data[1].foo).to.equal('bar');
                     done();
+                });
+            });
+            it('should read all stored data', function(done) {
+                var self = this;
+
+                // first store another row
+                this.adapter.save(TMP_KEY + '-1', testData, function(/*err, data*/) {
+                    setTimeout(function() { // wait a bit
+                        // then fetch all rows:
+                        self.adapter.getAll(function(err, records) {
+                            expect(!!err).to.equal(false);
+                            expect(typeof records[0]).to.equal('object');
+                            expect(typeof records[1]).to.equal('object');
+                            expect(records[0].data[0]).to.equal('hallo welt');
+                            done();
+                        });
+                    }, 500);
                 });
             });
             it('should delete the stored data', function(done) {

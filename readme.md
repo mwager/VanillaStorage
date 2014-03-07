@@ -65,12 +65,13 @@ Either include the files via script tags:
 
 ## Usage ##
 
-The API is all async and pretty simple, there are 4 public methods:
+The API is all async and pretty simple, basically there are 5 public methods:
 
-* `get(key, fn)`
-* `save(key, data, fn)`
-* `drop(key, fn)`
-* `nuke(fn)`
+* `get(key, fn)`        // fetch data for key
+* `getAll(fn)`          // fetch data for all keys ("all rows")
+* `save(key, data, fn)` // store data for key
+* `drop(key, fn)`       // drop data for key
+* `nuke(fn)`            // drop data for all keys ("all rows")
 
 Callback functions always have the error as first parameter, data as second if any. So if the first parameter of a callback is `undefined` it means the operation was successful.
 
@@ -147,7 +148,7 @@ if(idb.isValid()) {
 }
 ```
 
-### Testing ###
+## Testing ##
 
     $ grunt test
 
@@ -159,25 +160,8 @@ Run the suite in real browsers via `testem`:
 
     $ grunt testem
 
-
-
 ## TODOs ##
-* compression via config? performance?
-http://www.js2node.com/html5/html5-localstorage-compression
-http://jsfiddle.net/jU7E4/3/
-
 * search the repo for `TODO`...
-* figure out way to store more data using phantomjs. increase in storageTest, see TODO. or only on browsers? testem etc...
-
-    $ grunt test-server &
-    $ phantomjs --help # -> --local-storage-quota=<val in KB> ...
-
-    ---> but smt like the following fails with more than ~4MB..
-    $ phantomjs --debug=false --local-storage-path=. --local-storage-quota=100000000000??? ./node_modules/mocha-phantomjs/lib/mocha-phantomjs.coffee http://localhost:1234/test
-
-    $ grunt test #fails too if too much data..
-
-* more options: pass db name and version, ...
 * create more advanced tests in more browsers
 * see this https://developer.apple.com/library/ios/documentation/AppleApplications/Reference/SafariWebContent/Client-SideStorage/Client-SideStorage.html#//apple_ref/doc/uid/TP40002051-CH4-SW5
 

@@ -116,32 +116,111 @@
          *       first param in the error callback
          */
         VanillaStorage.prototype = {
+            /**
+             * Check if the currently used storage method is supported
+             * @return {boolean} True if supported
+             */
             isValid: function() {
                 return this.adapter.isValid();
             },
 
+            /**
+             * Fetch data for a given key
+             *
+             * @param {string}   key      The key
+             * @param {function} callback The callback - node style (err, data)
+             */
             get: function(key, callback) {
                 callback = ensureCallback(callback);
 
                 this.adapter.get(key, callback);
             },
 
+            /**
+             * Fetch all data for all stored keys (i.e. "all rows")
+             *
+             * @param {string}   key      The key
+             * @param {function} callback The callback - node style (err, data)
+             *                            `data` will be an array ob objects
+             *                            like [{key: <key>, data: <data>}, ...]
+             */
+            getAll: function(callback) {
+                callback = ensureCallback(callback);
+
+                this.adapter.getAll(callback);
+            },
+
+            /**
+             * Fetch data for a given key
+             *
+             * @param {string}   key      The key
+             * @param {object}   data     The data to store. May be an object or
+             *                            an array and must be JSON parseable
+             * @param {function} callback The callback - node style (err, data)
+             */
             save: function(key, data, callback) {
                 callback = ensureCallback(callback);
 
                 this.adapter.save(key, data, callback);
             },
 
+            /**
+             * Delete data for a given key
+             *
+             * @param {string}   key      The key
+             * @param {function} callback The callback - node style (err, data)
+             */
             drop: function(key, callback) {
                 callback = ensureCallback(callback);
 
                 this.adapter.drop(key, callback);
             },
 
+            /**
+             * Delete all data for all keys
+             *
+             * @param {function} callback The callback - node style (err)
+             */
             nuke: function(callback) {
                 callback = ensureCallback(callback);
 
                 this.adapter.nuke(callback);
+            },
+
+            /**
+             * Calculates the size (in MB) of the current storage (useful for development)
+             *
+             * @param {function} callback The callback - node style (err)
+             */
+            __getStorageSize: function(callback) {
+                callback = ensureCallback(callback);
+
+                this.getAll(function(err, data) {
+                    if(err) {
+                        return callback(err);
+                    }
+
+                    if(!data || data.length === 0) {
+                        callback('No data found');
+                    }
+
+                    var i, len = data.length, row, bytesCnt = 0;
+                    for(i = 0; i < len; i++) {
+                        row = data[i];
+                        try {
+                            // log(">>", JSON.stringify(row))
+                            bytesCnt += JSON.stringify(row).length;
+                        }
+                        catch(e) {
+                            errorOut(e);
+                        }
+                    }
+
+                    // round:
+                    var size = bytesCnt/1024/1024;
+                    size = Math.round(size * 100) / 100;
+                    callback(null, size);
+                });
             }
         };
 

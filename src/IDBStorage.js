@@ -131,17 +131,16 @@
                 callback = ensureCallback(callback);
                 key      = parseKey(key);
 
-                var trans, store, storeName = this.OBJECT_STORE_NAME;
+                var trans, store, request, storeName = this.OBJECT_STORE_NAME;
 
                 if(!this.db) {
                     return callback('IDBStorage.js this.db is undefined');
                 }
 
                 try {
-                    trans = this.db.transaction([storeName], 'readonly');
-                    store = trans.objectStore(storeName);
-
-                    var request = store.get(key);
+                    trans   = this.db.transaction([storeName], 'readonly');
+                    store   = trans.objectStore(storeName);
+                    request = store.get(key);
 
                     request.onsuccess = function(e) {
                         var result = e.target.result;
@@ -157,6 +156,47 @@
                         return callback(null, result.data);
                     };
                     request.onerror = function(e) {
+                        callback(e);
+                    };
+                }
+                catch(e) {
+                    return callback(e);
+                }
+            },
+
+            getAll: function(callback) {
+                callback = ensureCallback(callback);
+
+                var trans, store, cursor, storeName = this.OBJECT_STORE_NAME;
+
+                var data = [];
+
+                if(!this.db) {
+                    return callback('IDBStorage.js this.db is undefined');
+                }
+
+                try {
+                    trans   = this.db.transaction([storeName], 'readonly');
+                    store   = trans.objectStore(storeName);
+                    cursor  = store.openCursor();
+
+                    cursor.onsuccess = function(e) {
+                        var res = e.target.result;
+
+                        if(res) {
+                            data.push({
+                                key: res.key,
+                                data: res.value.data
+                            });
+                            // continue...
+                            res.continue();
+                        }
+                        // finally done?
+                        else {
+                            callback(null, data);
+                        }
+                    };
+                    cursor.onerror = function(e) {
                         callback(e);
                     };
                 }
