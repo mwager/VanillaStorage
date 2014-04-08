@@ -1,8 +1,6 @@
 # VanillaStorage.js #
 
 [![Build Status](https://travis-ci.org/mwager/VanillaStorage.png?branch=master)](https://travis-ci.org/mwager/VanillaStorage)
-[![Dependencies Status](https://david-dm.org/mwager/VanillaStorage.png)](https://david-dm.org/mwager/VanillaStorage)
-
 
 [Run the tests in your browser](http://mwager.github.io/VanillaStorage/test/)
 
