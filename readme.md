@@ -1,5 +1,15 @@
 # VanillaStorage.js #
 
+## Deprecated Warning! ##
+
+I am now using [LocalForage](https://github.com/mozilla/localForage) from Mozilla and so I will not maintain this code anymore.
+
+----
+
+<br><br><br><br><br><br><br>
+
+
+
 [![Build Status](https://travis-ci.org/mwager/VanillaStorage.png?branch=master)](https://travis-ci.org/mwager/VanillaStorage)
 
 [Run the tests in your browser](http://mwager.github.io/VanillaStorage/test/)
